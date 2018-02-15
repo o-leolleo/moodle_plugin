@@ -66,7 +66,6 @@ You can access the running container as if it was a real machine, so you can con
 to the mariabd instance of the compose service and load (or restore from) a backup right into it.
 
 The compose service creates containers names based on docker-compose.yml current directory name by default.
-So you can run, assuming <backup> is yout backup
 
 So, if you have it on a moodle folder, you'll end up with a moodle_mariadb_1 running container for
 the database container and moodle_moodle_1 for the moodle application container.
@@ -75,7 +74,7 @@ Then you can run a command (not sure if this is the cleanest way of doing it, I'
 like
 
 ```bash
-$ mysql moodle -u root -h 172.18.0.2 < <backup>
+$ mysql moodle -u root -h 172.18.0.2 < $backup
 ```
 
-Assuming <backup> as your backup file path.
+Assuming $backup as your backup file path.
