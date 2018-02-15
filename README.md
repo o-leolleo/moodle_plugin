@@ -29,6 +29,9 @@ or if, like me, you use arch-linux just use pacman through
 ```bash
 $ sudo pacman -S docker
 ```
+- **LOOK** I had issues installing docker on my arch-linux PC,
+	since, after installing docker, running `$ systemctl start docker`
+	didn't work... I've rebooted and everything went ok.
 
 and of course take a look onto [arch-wiki entry on docker](https://wiki.archlinux.org/index.php/Docker).
 
@@ -38,9 +41,11 @@ You may have to install `docker-compose` in order to use it, so you may have to 
 $ sudo pacman -S docker-compose
 ```
 
-### Do the compose nice step! (TODO: this will be updated in some hours (had to leave the PC for a while))
+### Do the compose nice step!
 
-make sure that you have Run
+make sure that you have **sudo permissions**
+or are in the **docker** ([be aware](https://github.com/moby/moby/issues/9976)) group
+and run
 
 ```bash
 $ docker-compose up
@@ -61,6 +66,8 @@ You can access the running container as if it was a real machine, so you can con
 to the mariabd instance of the compose service and load (or restore from) a backup right into it.
 
 The compose service creates containers names based on docker-compose.yml current directory name by default.
+So you can run, assuming <backup> is yout backup
+
 So, if you have it on a moodle folder, you'll end up with a moodle_mariadb_1 running container for
 the database container and moodle_moodle_1 for the moodle application container.
 
@@ -68,5 +75,7 @@ Then you can run a command (not sure if this is the cleanest way of doing it, I'
 like
 
 ```bash
-$ mysql moodle -u root -h 172.18.0.2 < 20171217-plataformaead-quarta.sql
+$ mysql moodle -u root -h 172.18.0.2 < <backup>
 ```
+
+Assuming <backup> as your backup file path.
