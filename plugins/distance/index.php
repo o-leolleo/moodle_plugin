@@ -13,8 +13,7 @@ echo $OUTPUT->heading(get_string('pluginname', 'report_distance'));
 try {
 	$users_count = $DB->count_records('user');
 	$course_count = $DB->count_records('course');
-	$course_categories_count = $DB->count_records('course_categories');
-
+	$course_categories_count = $DB->count_records('course_categories'); 
 }
 catch (dml_connection_exception $e) {
 	 echo $e;
@@ -24,7 +23,7 @@ catch (dml_read_exception $e) {
 }
 catch (Exception $e) {
 	 echo $e;
-} 
+}
 
 $user_series = new core\chart_series("# of users", [$users_count]);
 $course_series = new core\chart_series("# of courses", [$course_count]);

@@ -15,7 +15,7 @@ services:
       - '443:443'
     volumes:
       - 'moodle_data:/bitnami'
-      - './plugins:/root/plugins'
+      - './plugins/distance/:/bitnami/moodle/report/distance/'
     depends_on:
       - mariadb
 volumes:
