@@ -3,12 +3,12 @@
 use \report_distance\constant\query;
 
 class report_distance_miner
-{
-
+{ 
 	public function __construct() {}
 
-	public function create_base($base_name)
+	public function create_base($base_name, $course_id)
 	{
-		echo "\n".query::$create_base."\n";
+		global $DB;
+		return $DB->get_recordset_sql(query::$create_base, array($course_id));
 	}
 }
