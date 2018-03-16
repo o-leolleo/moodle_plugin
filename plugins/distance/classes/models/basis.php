@@ -1,6 +1,6 @@
 <?php
 
-namespace report_distance\constant;
+namespace report_distance\models;
 
 // TODO ver como calcular o período
 //' CALCULATE_PERIOD( ', @first_semester, ',HANDLE_SEMESTER(semester.name)) AS \'periodo\',',
@@ -9,9 +9,9 @@ namespace report_distance\constant;
 // TODO ver como calcular data final sem precisar dessas funções
 //' CALCULATE_END_DATE(HANDLE_SEMESTER(semester.name))   AS \'data_fim\', ',
 
-class query
+class basis
 {
-	public static $create_base = "
+	const create_base = "
 		SELECT  course.name AS 'curso',
 			semester.name AS 'semestre',
 			discipline.fullname AS 'disciplina_nome',
@@ -36,4 +36,28 @@ class query
 			semestre,
 			disciplina_id,
 			aluno_nome";
+
+	const min_semester = 'SELECT MIN(name) FROM {course_categories} WHERE parent = ?';
+
+	public static function get_min_semester($courseid)
+	{
+		global $DB;
+		return $DB->get_record_sql(self::min_semester, [ $courseid ]);
+	}
+
+	public static function calculate_period($curr_semester, $first_semester)
+	{
+		$first_year	  = (int) substr($first_semester, 4);
+		$fisrt_period = (int) substr($first_semester, -1);
+		$curr_year    = (int) substr($curr_semester, 4);
+		$curr_period  = (int) substr($curr_semester, -1);
+
+		return ($curr_year - $first_year) * 2 + $curr_period - $first_period + 1;
+	}
+
+	public static function handle_semester($semester)
+	{
+		return substr(preg_replace('/\s+/',' ', self::semester), -6);
+	}
+
 }

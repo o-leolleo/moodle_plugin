@@ -1,6 +1,6 @@
 <?php
 
-use \report_distance\constant\query;
+use \report_distance\models\basis;
 
 class report_distance_miner
 { 
@@ -9,6 +9,6 @@ class report_distance_miner
 	public function create_base($base_name, $course_id)
 	{
 		global $DB;
-		return $DB->get_recordset_sql(query::$create_base, array($course_id));
+		return $DB->get_recordset_sql(basis::create_base, array($course_id));
 	}
 }
