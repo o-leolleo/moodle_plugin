@@ -6,6 +6,8 @@ use DateTime;
 
 class basis
 {
+	const table = "basis";
+
 	const get = "
 		SELECT  course.name AS 'curso',
 			semester.name AS 'semestre',

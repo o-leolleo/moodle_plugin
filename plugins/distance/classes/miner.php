@@ -22,6 +22,13 @@ class report_distance_miner
 			$record->semestre = basis::handle_semester($record->semestre);
 			$record->periodo = basis::calculate_period($record->semestre, $first_semester->name);
 			$record->data_fim = basis::calculate_end_date($record->semestre, $record->periodo);
+
+			try {
+				$DB->insert_record(basis::table, $record);
+			}
+			catch(dml_write_exception $e) {
+				cli_problem($e->debuginfo);
+			}
 		}
 
 		$rs->close();
