@@ -1,5 +1,4 @@
 <?php
-
 namespace report_distance\models;
 
 use DateTime;
@@ -9,7 +8,9 @@ class basis
 	const table = "basis";
 
 	const get = "
-		SELECT  course.name AS 'curso',
+		SELECT
+			course.id AS course_id,
+			course.name AS 'curso',
 			semester.name AS 'semestre',
 			discipline.fullname AS 'disciplina_nome',
 			discipline.id  AS 'disciplina_id',
@@ -65,5 +66,19 @@ class basis
 	public static function handle_semester($semester)
 	{
 		return substr(preg_replace('/\s+/',' ', $semester), -6);
+	}
+
+	public static function handler($course_id)
+	{
+		$first_semester = self::get_min_semester($course_id);
+		$first_semester->name = self::handle_semester($first_semester->name);
+
+		return function($record) use ($first_semester) {
+			$record->semestre = self::handle_semester($record->semestre);
+			$record->periodo  = self::calculate_period($record->semestre, $first_semester->name);
+			$record->data_fim = self::calculate_end_date($record->semestre, $record->periodo);
+
+			return $record;
+		};
 	}
 }

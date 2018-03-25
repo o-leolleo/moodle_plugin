@@ -1,32 +1,59 @@
 <?php
 
 use \report_distance\models\basis;
+use \report_distance\models\discipline;
+use \report_distance\models\student;
+use \report_distance\models\teacher;
 
 class report_distance_miner
 {
 	public function __construct() {}
 
-	public function generate_base($course_id)
+	public function populate_base($course_id)
+	{
+		$this->populate(basis::class, $course_id, basis::handler($course_id));
+	}
+
+	public function populate_students()
+	{
+		$this->populate(student::class);
+	}
+
+	public function populate_teachers()
+	{
+		$this->populate(teacher::class);
+	}
+
+	public function populate_posts()
+	{
+		$this->populate(posts::class);
+	}
+
+	public function populate_disciplines($course_id)
+	{
+		$this->populate(discipline::class, $course_id);
+	}
+
+	private function populate($model, $course_id = null, $handler = null)
 	{
 		global $DB;
 
-		$first_semester = basis::get_min_semester($course_id);
-		$first_semester->name = basis::handle_semester($first_semester->name);
+		if (isset($course_id)) {
+			$rs = $DB->get_recordset_sql($model::get, [$course_id]);
+		}
+		else {
+			$rs = $DB->get_recordset_sql($model::get);
+		}
 
-		$rs = $DB->get_recordset_sql(basis::get, [$course_id]);
-
-		foreach($rs as $record) {
-			// TODO most of this treatment should be internationalized
-			// in the future, and those helper functions abandoned
-			// for a query based soluction which doesn't need posprocessing
-			$record->semestre = basis::handle_semester($record->semestre);
-			$record->periodo = basis::calculate_period($record->semestre, $first_semester->name);
-			$record->data_fim = basis::calculate_end_date($record->semestre, $record->periodo);
+		foreach ($rs as $record) {
+			if (isset($handler)) {
+				$record = $handler($record);
+			}
 
 			try {
-				$DB->insert_record(basis::table, $record);
+				$DB->insert_record($model::table, $record);
 			}
-			catch(dml_write_exception $e) {
+			catch (dml_write_exception $e) {
 				cli_problem($e->debuginfo);
 			}
 		}

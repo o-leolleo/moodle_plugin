@@ -8,17 +8,20 @@ $id = 88;
 $report = new report_distance_miner();
 
 try {
+	//echo "mounting basis...\n";
+	//$report->populate_base($id);
 
-	//$rs = $report->create_base('adm_publica', $id);
+	//echo "mounting students...\n";
+	//$report->populate_students();
 
-	$report->generate_base($id);
+	echo "mounting teachers...\n";
+	$report->populate_teachers();
 
-	//foreach($rs as $record) {
-		////var_dump(\report_distance\models\basis::handle_semester($record->semestre));
-		////var_dump(\report_distance\models\basis::handle_semester($record->semestre));
-	//}
+	echo "mounting teachers...\n";
+	$report->populate_posts();
 
-	//$rs->close();
+	echo "mounting disciplines...\n";
+	$report->populate_disciplines($id);
 }
 catch (dml_read_exception $e) {
 	cli_problem($e->debuginfo);
@@ -26,8 +29,3 @@ catch (dml_read_exception $e) {
 finally {
 	echo "O FIM\n";
 }
-//catch (Exception $e) {
-	//echo $e->getMessage()."\n";
-	//echo $e->getLine()."\n";
-//}
-//var_dump($records);
