@@ -10,11 +10,6 @@ class report_distance_miner
 {
 	public function __construct() {}
 
-	public function populate_base($course_id)
-	{
-		$this->populate(basis::class, $course_id, basis::handler($course_id));
-	}
-
 	public function populate_students()
 	{
 		$this->populate(student::class);
@@ -29,6 +24,11 @@ class report_distance_miner
 	{
 		$this->populate(posts::class);
 	}
+
+	public function populate_base($course_id)
+	{
+		$this->populate(basis::class, $course_id, basis::handler($course_id));
+	} 
 
 	public function populate_disciplines($course_id)
 	{
