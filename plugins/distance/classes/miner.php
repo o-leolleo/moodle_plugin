@@ -4,6 +4,7 @@ use \report_distance\models\basis;
 use \report_distance\models\discipline;
 use \report_distance\models\student;
 use \report_distance\models\teacher;
+use \report_distance\models\aluno_ids;
 
 class report_distance_miner
 {
@@ -32,6 +33,11 @@ class report_distance_miner
 	public function populate_disciplines($course_id)
 	{
 		$this->populate(discipline::class, $course_id);
+	}
+
+	public function populate_alunos_ids($course_id)
+	{
+		$this->populate(aluno_ids::class, $course_id);
 	}
 
 	private function populate($model, $course_id = null, $handler = null)

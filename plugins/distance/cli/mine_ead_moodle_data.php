@@ -14,14 +14,18 @@ try {
 	//echo "mounting students...\n";
 	//$report->populate_students();
 
-	echo "mounting teachers...\n";
-	$report->populate_teachers();
+	//echo "mounting teachers...\n";
+	//$report->populate_teachers();
 
-	echo "mounting teachers...\n";
-	$report->populate_posts();
+	//echo "mounting teachers...\n";
+	//$report->populate_posts();
+	//
 
-	echo "mounting disciplines...\n";
-	$report->populate_disciplines($id);
+	//echo "mounting disciplines...\n";
+	//$report->populate_disciplines($id);
+
+	echo "mounting aluno_ids...\n";
+	$report->populate_alunos_ids($id);
 }
 catch (dml_read_exception $e) {
 	cli_problem($e->debuginfo);
