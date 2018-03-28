@@ -5,6 +5,7 @@ use \report_distance\models\discipline;
 use \report_distance\models\student;
 use \report_distance\models\teacher;
 use \report_distance\models\aluno_ids;
+use \report_distance\models\course_id;
 
 class report_distance_miner
 {
@@ -28,7 +29,7 @@ class report_distance_miner
 	public function populate_base($course_id)
 	{
 		$this->populate(basis::class, $course_id, basis::handler($course_id));
-	} 
+	}
 
 	public function populate_disciplines($course_id)
 	{
@@ -38,6 +39,18 @@ class report_distance_miner
 	public function populate_alunos_ids($course_id)
 	{
 		$this->populate(aluno_ids::class, $course_id);
+	}
+
+	// TODO course_id ainda não existe
+	public function populate_course_ids($course_id)
+	{
+		$this->populate(course_id::class, $course_id);
+	}
+
+	// TODO log_reduzido ainda não existe
+	public function populate_log_reduzido($course_id)
+	{
+		$this->populate(log_reduzido::class, $course_id);
 	}
 
 	private function populate($model, $course_id = null, $handler = null)

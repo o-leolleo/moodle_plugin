@@ -24,8 +24,11 @@ try {
 	//echo "mounting disciplines...\n";
 	//$report->populate_disciplines($id);
 
-	echo "mounting aluno_ids...\n";
-	$report->populate_alunos_ids($id);
+	//echo "mounting aluno_ids...\n";
+	//$report->populate_alunos_ids($id);
+
+	echo "mounting id_disciplinas...\n";
+	$report->populate_course_ids($id);
 }
 catch (dml_read_exception $e) {
 	cli_problem($e->debuginfo);

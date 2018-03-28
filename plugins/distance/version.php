@@ -6,7 +6,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'report_distance';
-$plugin->version = 2018021415;
+$plugin->version = 2018021420;
 $plugin->require = 2016120500;
 $plugin->maturity = MATURITY_ALPHA;
 $plugin->name = '0.0.1';

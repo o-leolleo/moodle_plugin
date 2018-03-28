@@ -10,7 +10,7 @@ class discipline
 			course_id,
 			data_inicio, 
 			data_fim 
-		FROM {basis} 
+		FROM {".basis::table."} 
 		WHERE course_id = ?
 		ORDER BY disciplina_id";
 }
