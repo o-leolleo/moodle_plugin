@@ -6,6 +6,8 @@ use \report_distance\models\student;
 use \report_distance\models\teacher;
 use \report_distance\models\aluno_ids;
 use \report_distance\models\course_id;
+use \report_distance\models\log_buffer;
+use \report_distance\models\minified_log;
 
 class report_distance_miner
 {
@@ -50,7 +52,8 @@ class report_distance_miner
 	// TODO log_reduzido ainda não existe
 	public function populate_log_reduzido($course_id)
 	{
-		$this->populate(log_reduzido::class, $course_id);
+		$this->populate(log_buffer::class, $course_id);
+		$this->populate(minified_log::class, $course_id);
 	}
 
 	private function populate($model, $course_id = null, $handler = null)
