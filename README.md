@@ -20,13 +20,13 @@ So, to start with a runnig moodle install with the newer 3.4.1 version, just
 
 If in debian based GNU/Linux ditro, just issue
 
-```bash
+```shell-session
 $ sudo apt install docker
 ```
 
 or if, like me, you use arch-linux just use pacman through
 
-```bash
+```shell-session
 $ sudo pacman -S docker
 ```
 - **LOOK** I had issues installing docker on my arch-linux PC,
@@ -37,7 +37,7 @@ and of course take a look onto [arch-wiki entry on docker](https://wiki.archlinu
 
 You may have to install `docker-compose` in order to use it, so you may have to issue (assuming arch-linux)
 
-```bash
+```shell-session
 $ sudo pacman -S docker-compose
 ```
 
@@ -47,13 +47,13 @@ make sure that you have **sudo permissions**
 or are in the **docker** ([be aware](https://github.com/moby/moby/issues/9976)) group
 and run
 
-```bash
+```shell-session
 $ docker-compose up
 ```
 
 or alternatively run it on background through
 
-```bash
+```shell-session
 $ docker-compose up -d
 ```
 
@@ -73,7 +73,7 @@ the database container and moodle_moodle_1 for the moodle application container.
 Then you can run a command (not sure if this is the cleanest way of doing it, I'm just starting into docker world :)
 like
 
-```bash
+```shell-session
 $ mysql moodle -u root -h 172.18.0.2 < $backup
 ```
 
