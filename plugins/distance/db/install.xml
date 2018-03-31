@@ -24,6 +24,7 @@
         <FIELD NAME="data_inicio" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="data_fim" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="course_id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="semestre" TYPE="char" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="id" TYPE="primary" FIELDS="id"/>
@@ -181,11 +182,13 @@
         <FIELD NAME="var18" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Quantidade de acessos do(a) aluno(a) ao ambiente no período da disciplina"/>
         <FIELD NAME="var26" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Quantidade média de acessos de um(a) aluno(a) aos diferentes tipos de recursos disponibilizados (página web, vídeo, pdfs...)."/>
         <FIELD NAME="var27" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Quantidade média de acessos de um(a) aluno(a) aos diferentes tipos de atividades disponibilizadas (webquest, forum, quiz, ...)."/>
+        <FIELD NAME="course_id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
         <KEY NAME="aluno_id" TYPE="foreign" FIELDS="aluno_id" REFTABLE="user" REFFIELDS="id"/>
         <KEY NAME="disciplina_id" TYPE="foreign" FIELDS="disciplina_id" REFTABLE="course" REFFIELDS="id"/>
+        <KEY NAME="course_id" TYPE="foreign" FIELDS="course_id" REFTABLE="course_category" REFFIELDS="id"/>
       </KEYS>
       <INDEXES>
         <INDEX NAME="aluno_disciplina_periodo" UNIQUE="true" FIELDS="aluno_id, disciplina_id, periodo"/>

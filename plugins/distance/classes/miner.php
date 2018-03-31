@@ -9,6 +9,7 @@ use \report_distance\models\aluno_ids;
 use \report_distance\models\course_id;
 use \report_distance\models\log_buffer;
 use \report_distance\models\minified_log;
+use \report_distance\models\transational_distance;
 
 class report_distance_miner
 {
@@ -55,6 +56,11 @@ class report_distance_miner
 	{
 		$this->populate(log_buffer::class, $course_id);
 		$this->populate(minified_log::class, $course_id);
+	}
+
+	public function populate_transational_distance($course_id)
+	{
+		$this->populate(transational_distance::class, $course_id);
 	}
 
 	public function purge_temp_data()

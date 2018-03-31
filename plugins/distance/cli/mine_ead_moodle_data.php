@@ -33,6 +33,9 @@ try {
 
 	echo "populating the fucking log...\n";
 	$report->populate_log_reduzido($id);
+
+	echo "calculating transational distance...\n";
+	$report->populate_transational_distance($id);
 }
 catch (dml_read_exception $e) {
 	cli_problem($e->debuginfo);
