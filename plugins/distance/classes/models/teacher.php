@@ -13,4 +13,6 @@ class teacher
 		INNER JOIN mdl_user u ON u.id=rs.userid 
 		WHERE e.contextlevel=50 AND rs.roleid IN (3,4,10,20,21)
 		ORDER BY c.id, u.id";
+
+	const purge = "DELETE FROM {".self::table."}";
 }
