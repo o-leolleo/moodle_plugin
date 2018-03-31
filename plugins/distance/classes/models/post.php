@@ -17,6 +17,5 @@ class post
 		FROM mdl_forum_posts p1
 		INNER JOIN mdl_forum_posts p2 ON  p1.id=p2.parent
 		INNER JOIN mdl_forum_discussions fd ON p1.discussion=fd.id
-		INNER JOIN mdl_forum f ON fd.forum=f.id
-		ORDER BY fd.course, p2.userid";
+		INNER JOIN mdl_forum f ON fd.forum=f.id";
 }
