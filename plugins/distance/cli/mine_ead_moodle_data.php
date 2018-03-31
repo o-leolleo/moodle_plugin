@@ -8,27 +8,26 @@ $id = 88;
 $report = new report_distance_miner();
 
 try {
-	//echo "mounting basis...\n";
-	//$report->populate_base($id);
+	echo "mounting basis...\n";
+	$report->populate_base($id);
 
-	//echo "mounting students...\n";
-	//$report->populate_students();
+	echo "mounting students...\n";
+	$report->populate_students();
 
-	//echo "mounting teachers...\n";
-	//$report->populate_teachers();
+	echo "mounting teachers...\n";
+	$report->populate_teachers();
 
-	//echo "mounting teachers...\n";
-	//$report->populate_posts();
-	//
+	echo "mounting teachers...\n";
+	$report->populate_posts(); 
 
-	//echo "mounting disciplines...\n";
-	//$report->populate_disciplines($id);
+	echo "mounting disciplines...\n";
+	$report->populate_disciplines($id);
 
-	//echo "mounting aluno_ids...\n";
-	//$report->populate_alunos_ids($id);
+	echo "mounting aluno_ids...\n";
+	$report->populate_alunos_ids($id);
 
-	//echo "mounting id_disciplinas...\n";
-	//$report->populate_course_ids($id);
+	echo "mounting id_disciplinas...\n";
+	$report->populate_course_ids($id);
 
 	echo "populating the fucking log...\n";
 	$report->populate_log_reduzido($id);

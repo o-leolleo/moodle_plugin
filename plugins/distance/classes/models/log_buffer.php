@@ -13,18 +13,18 @@ class log_buffer
 			timecreated `time`,
 			userid,
 			courseid `course_id`,
-			TRIM(LEADING 'mod_' FROM component) AS `module`,
+			component,
 			action,
 			ip,
-			objectid AS `cmid`
+			objectid `cmid`
 		FROM {logstore_standard_log}
 		WHERE courseid
 		IN (
-			SELECT * FROM {".course_id::table."}
+			SELECT disciplina_id FROM {".course_id::table."} WHERE course_id = ?
 		)
 		AND userid
 		IN (
-			SELECT * FROM {".aluno_ids::table."}
+			SELECT aluno_id FROM {".aluno_ids::table."} WHERE course_id = ?
 		)
 		UNION
 		SELECT
@@ -35,11 +35,11 @@ class log_buffer
 			component,
 			action,
 			ip,
-			objectid
-		FROM mdl_logstore_standard_log
-		WHERE action=`loggedout`
+			objectid `cmid`
+		FROM {logstore_standard_log}
+		WHERE action='loggedout'
 		AND userid IN (
-			SELECT * FROM {".aluno_ids::table."}
+			SELECT aluno_id FROM {".aluno_ids::table."} WHERE course_id = ?
 		)
 		UNION
 		SELECT
@@ -50,10 +50,10 @@ class log_buffer
 			component,
 			action,
 			ip,
-			objectid
-		FROM mdl_logstore_standard_log
-		WHERE action=`loggedin`
+			objectid `cmid`
+		FROM {logstore_standard_log}
+		WHERE action='loggedin'
 		AND userid IN (
-			SELECT * FROM {".aluno_ids::table."}
+			SELECT aluno_id FROM {".aluno_ids::table."} WHERE course_id = ?
 		)";
 }

@@ -61,7 +61,9 @@ class report_distance_miner
 		global $DB;
 
 		if (isset($course_id)) {
-			$rs = $DB->get_recordset_sql($model::get, [$course_id]);
+			// TODO  the references to the same value should be
+			// replaced for something more elegant in the future
+			$rs = $DB->get_recordset_sql($model::get, [$course_id, $course_id, $course_id, $course_id]);
 		}
 		else {
 			$rs = $DB->get_recordset_sql($model::get);
