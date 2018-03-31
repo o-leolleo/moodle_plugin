@@ -15,40 +15,63 @@ class report_distance_miner
 {
 	public function __construct() {}
 
+	public function init() 
+	{
+		global $DB;
+
+		$DB->delete_records(transational_distance::table);
+
+		return $this;
+	}
+
 	public function populate_students()
 	{
 		$this->populate(student::class);
+
+		return $this;
 	}
 
 	public function populate_teachers()
 	{
 		$this->populate(teacher::class);
+
+		return $this;
 	}
 
 	public function populate_posts()
 	{
 		$this->populate(post::class);
+
+		return $this;
 	}
 
 	public function populate_base($course_id)
 	{
 		$this->populate(basis::class, $course_id, basis::handler($course_id));
+
+		return $this;
 	}
 
 	public function populate_disciplines($course_id)
 	{
 		$this->populate(discipline::class, $course_id);
+
+		return $this;
 	}
 
 	public function populate_alunos_ids($course_id)
 	{
 		$this->populate(aluno_ids::class, $course_id);
+
+		return $this;
 	}
 
 	// TODO course_id ainda não existe
 	public function populate_course_ids($course_id)
 	{
 		$this->populate(course_id::class, $course_id);
+
+		return $this;
 	}
 
 	// TODO log_reduzido ainda não existe
@@ -56,11 +79,15 @@ class report_distance_miner
 	{
 		$this->populate(log_buffer::class, $course_id);
 		$this->populate(minified_log::class, $course_id);
+
+		return $this;
 	}
 
 	public function populate_transational_distance($course_id)
 	{
 		$this->populate(transational_distance::class, $course_id);
+
+		return $this;
 	}
 
 	public function purge_temp_data()
@@ -76,6 +103,8 @@ class report_distance_miner
 		$DB->delete_records(course_id::table);
 		$DB->delete_records(log_buffer::table);
 		$DB->delete_records(minified_log::table);
+
+		return $this;
 	}
 
 	private function populate($model, $course_id = null, $handler = null)

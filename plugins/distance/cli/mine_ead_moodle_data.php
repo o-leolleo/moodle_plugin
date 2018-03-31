@@ -5,7 +5,7 @@ require_once($CFG->libdir.'/clilib.php');
 
 use report_distance\models\mdl_course_categories;
 
-$course_ids = mdl_course_categories::get_course_list(); 
+$course_ids = mdl_course_categories::get_course_list();
 $report = new report_distance_miner();
 
 // shared tables (should be views, but...)
