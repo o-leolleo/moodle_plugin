@@ -56,6 +56,4 @@ class log_buffer
 		AND userid IN (
 			SELECT aluno_id FROM {".aluno_ids::table."} WHERE course_id = ?
 		)";
-
-	const purge = "DELTE FROM {".self::table."}";
 }

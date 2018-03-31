@@ -35,8 +35,6 @@ class basis
 			disciplina_id,
 			aluno_nome";
 
-	const purge = "DELETE FROM {".self::table."}";
-
 	const min_semester = 'SELECT MIN(name) AS name FROM {course_categories} WHERE parent = ?';
 
 	public static function get_min_semester($courseid)

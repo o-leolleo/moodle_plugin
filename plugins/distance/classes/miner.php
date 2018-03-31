@@ -15,44 +15,70 @@ class report_distance_miner
 
 	public function populate_students()
 	{
+		global $DB;
+
+		$DB->delete_records(student::table);
 		$this->populate(student::class);
 	}
 
 	public function populate_teachers()
 	{
+		global $DB;
+
+		$DB->delete_records(teacher::table);
 		$this->populate(teacher::class);
 	}
 
 	public function populate_posts()
 	{
+		global $DB;
+
+		$DB->delete_records(posts::table);
 		$this->populate(posts::class);
 	}
 
 	public function populate_base($course_id)
 	{
+		global $DB;
+
+		$DB->delete_records(basis::table);
 		$this->populate(basis::class, $course_id, basis::handler($course_id));
 	}
 
 	public function populate_disciplines($course_id)
 	{
+		global $DB;
+
+		$DB->delete_records(discipline::table);
 		$this->populate(discipline::class, $course_id);
 	}
 
 	public function populate_alunos_ids($course_id)
 	{
+		global $DB;
+
+		$DB->delete_records(aluno_ids::table);
 		$this->populate(aluno_ids::class, $course_id);
 	}
 
 	// TODO course_id ainda não existe
 	public function populate_course_ids($course_id)
 	{
+		global $DB;
+
+		$DB->delete_records(course_id::table);
 		$this->populate(course_id::class, $course_id);
 	}
 
 	// TODO log_reduzido ainda não existe
 	public function populate_log_reduzido($course_id)
 	{
+		global $DB;
+
+		$DB->delete_records(log_buffer::table);
 		$this->populate(log_buffer::class, $course_id);
+
+		$DB->delete_records(minified_log::table);
 		$this->populate(minified_log::class, $course_id);
 	}
 

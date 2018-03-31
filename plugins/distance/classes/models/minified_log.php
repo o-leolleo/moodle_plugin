@@ -15,6 +15,4 @@ class minified_log
 			ip,
 			cmid
 		FROM {".log_buffer::table."}";
-
-	const purge = "DELETE FROM {".self::table."}";
 }

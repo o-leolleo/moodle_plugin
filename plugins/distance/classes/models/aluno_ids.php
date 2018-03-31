@@ -8,7 +8,5 @@ class aluno_ids
 	const get = "
 		SELECT DISTINCT(aluno_id), course_id
 		FROM {".basis::table."}
-		WHERE course_id = ? ";
-
-	const purge = "DELETE FROM {".self::table."}";
+		WHERE course_id = ? "; 
 }

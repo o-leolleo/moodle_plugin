@@ -13,6 +13,4 @@ class discipline
 		FROM {".basis::table."}
 		WHERE course_id = ?
 		ORDER BY disciplina_id";
-
-	const purge = "DELETE FROM {".self::table."}";
 }
