@@ -7,9 +7,7 @@ $id = 88;
 
 $report = new report_distance_miner();
 
-try {
-	$report->purge_temp_data();
-
+try { 
 	echo "mounting basis...\n";
 	$report->populate_base($id);
 
@@ -36,10 +34,13 @@ try {
 
 	echo "calculating transational distance...\n";
 	$report->populate_transational_distance($id);
+
+	echo "cleaning temporary data...\n";
+	$report->purge_temp_data();
 }
 catch (dml_read_exception $e) {
 	cli_problem($e->debuginfo);
 }
 finally {
-	echo "O FIM\n";
+	echo "DONE!\n";
 }
