@@ -9,21 +9,51 @@ class log_buffer
 	// campos estão repetidos
 	const get = "
 		SELECT
-		id,
-		timecreated `time`,
-		userid,
-		courseid `course`,
-		TRIM(LEADING \'mod_\' FROM component) AS `module`,
-		action,
-		ip,
-		objectid AS `cmid`
-		  FROM {logstore_standard_log} WHERE courseid IN (SELECT * FROM
-		{".course_id::table."}
-		 ) AND userid IN (SELECT * FROM
-		{".aluno_ids::table."}
-		 ) UNION SELECT id,timecreated, userid,courseid,component,action,ip,objectid FROM mdl_logstore_standard_log WHERE action=`loggedout` AND userid IN (SELECT * FROM
-		{".aluno_ids::table."}
-		 ) UNION SELECT id,timecreated, userid,courseid,component,action,ip,objectid  FROM mdl_logstore_standard_log  WHERE action=`loggedin` AND userid IN (SELECT * FROM
-		{".aluno_ids::table."}
-		 )";
+			id,
+			timecreated `time`,
+			userid,
+			courseid `course_id`,
+			TRIM(LEADING 'mod_' FROM component) AS `module`,
+			action,
+			ip,
+			objectid AS `cmid`
+		FROM {logstore_standard_log}
+		WHERE courseid
+		IN (
+			SELECT * FROM {".course_id::table."}
+		)
+		AND userid
+		IN (
+			SELECT * FROM {".aluno_ids::table."}
+		)
+		UNION
+		SELECT
+			id,
+			timecreated,
+			userid,
+			courseid `course_id`,
+			component,
+			action,
+			ip,
+			objectid
+		FROM mdl_logstore_standard_log
+		WHERE action=`loggedout`
+		AND userid IN (
+			SELECT * FROM {".aluno_ids::table."}
+		)
+		UNION
+		SELECT
+			id,
+			timecreated,
+			userid,
+			courseid `course_id`,
+			component,
+			action,
+			ip,
+			objectid
+		FROM mdl_logstore_standard_log
+		WHERE action=`loggedin`
+		AND userid IN (
+			SELECT * FROM {".aluno_ids::table."}
+		)";
 }
