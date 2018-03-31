@@ -170,6 +170,17 @@
         <FIELD NAME="data_fim" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="aluno_nome" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="aluno_id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="var01" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Quantidade geral de postagens de um(a) aluno(a) em fóruns."/>
+        <FIELD NAME="var31" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Quantidade de acessos da(o) aluna(o) aos fóruns."/>
+        <FIELD NAME="var34" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Quantidade de tópicos criados pelo(a) aluno(a) em fóruns."/>
+        <FIELD NAME="var39" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Quantidade de postagens de um(a) aluno(a) em fóruns, em resposta a outros(as) alunos(as)."/>
+        <FIELD NAME="var13a" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Quantidade de acessos do(a) aluno(a) ao ambiente por turno (Manhã)"/>
+        <FIELD NAME="var13b" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Quantidade de acessos do(a) aluno(a) ao ambiente por turno (Tarde)"/>
+        <FIELD NAME="var13c" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Quantidade de acessos do(a) aluno(a) ao ambiente por turno (Noite)"/>
+        <FIELD NAME="var13d" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Quantidade de acessos do(a) aluno(a) ao ambiente por turno (Madrugada)"/>
+        <FIELD NAME="var18" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Quantidade de acessos do(a) aluno(a) ao ambiente no período da disciplina"/>
+        <FIELD NAME="var26" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Quantidade média de acessos de um(a) aluno(a) aos diferentes tipos de recursos disponibilizados (página web, vídeo, pdfs...)."/>
+        <FIELD NAME="var27" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Quantidade média de acessos de um(a) aluno(a) aos diferentes tipos de atividades disponibilizadas (webquest, forum, quiz, ...)."/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
