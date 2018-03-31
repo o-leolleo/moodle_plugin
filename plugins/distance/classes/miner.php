@@ -3,6 +3,7 @@
 use \report_distance\models\basis;
 use \report_distance\models\discipline;
 use \report_distance\models\student;
+use \report_distance\models\post;
 use \report_distance\models\teacher;
 use \report_distance\models\aluno_ids;
 use \report_distance\models\course_id;
@@ -15,71 +16,60 @@ class report_distance_miner
 
 	public function populate_students()
 	{
-		global $DB;
-
-		$DB->delete_records(student::table);
 		$this->populate(student::class);
 	}
 
 	public function populate_teachers()
 	{
-		global $DB;
-
-		$DB->delete_records(teacher::table);
 		$this->populate(teacher::class);
 	}
 
 	public function populate_posts()
 	{
-		global $DB;
-
-		$DB->delete_records(posts::table);
-		$this->populate(posts::class);
+		$this->populate(post::class);
 	}
 
 	public function populate_base($course_id)
 	{
-		global $DB;
-
-		$DB->delete_records(basis::table);
 		$this->populate(basis::class, $course_id, basis::handler($course_id));
 	}
 
 	public function populate_disciplines($course_id)
 	{
-		global $DB;
-
-		$DB->delete_records(discipline::table);
 		$this->populate(discipline::class, $course_id);
 	}
 
 	public function populate_alunos_ids($course_id)
 	{
-		global $DB;
-
-		$DB->delete_records(aluno_ids::table);
 		$this->populate(aluno_ids::class, $course_id);
 	}
 
 	// TODO course_id ainda não existe
 	public function populate_course_ids($course_id)
 	{
-		global $DB;
-
-		$DB->delete_records(course_id::table);
 		$this->populate(course_id::class, $course_id);
 	}
 
 	// TODO log_reduzido ainda não existe
 	public function populate_log_reduzido($course_id)
 	{
+		$this->populate(log_buffer::class, $course_id);
+		$this->populate(minified_log::class, $course_id);
+	}
+
+	public function purge_temp_data()
+	{
 		global $DB;
 
+		$DB->delete_records(basis::table);
+		$DB->delete_records(discipline::table);
+		$DB->delete_records(student::table);
+		$DB->delete_records(post::table);
+		$DB->delete_records(teacher::table);
+		$DB->delete_records(aluno_ids::table);
+		$DB->delete_records(course_id::table);
 		$DB->delete_records(log_buffer::table);
-		$this->populate(log_buffer::class, $course_id);
-
 		$DB->delete_records(minified_log::table);
-		$this->populate(minified_log::class, $course_id);
 	}
 
 	private function populate($model, $course_id = null, $handler = null)

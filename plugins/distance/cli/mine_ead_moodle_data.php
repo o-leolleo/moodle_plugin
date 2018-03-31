@@ -8,6 +8,8 @@ $id = 88;
 $report = new report_distance_miner();
 
 try {
+	$report->purge_temp_data();
+
 	echo "mounting basis...\n";
 	$report->populate_base($id);
 
@@ -17,8 +19,8 @@ try {
 	echo "mounting teachers...\n";
 	$report->populate_teachers();
 
-	echo "mounting teachers...\n";
-	$report->populate_posts(); 
+	echo "mounting posts...\n";
+	$report->populate_posts();
 
 	echo "mounting disciplines...\n";
 	$report->populate_disciplines($id);
