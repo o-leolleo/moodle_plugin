@@ -18,7 +18,7 @@ echo "mounting teachers...\n";
 $report->populate_teachers();
 
 echo "mounting posts...\n";
-$report->populate_posts(); 
+$report->populate_posts();
 
 foreach($course_ids as $id) {
 	try {
@@ -40,8 +40,7 @@ foreach($course_ids as $id) {
 		$report->populate_log_reduzido($id);
 
 		echo "calculating transational distance...\n";
-		$report->populate_transational_distance($id);
-
+		$report->populate_transational_distance($id); 
 	}
 	catch (dml_read_exception $e) {
 		cli_problem($e->debuginfo);
