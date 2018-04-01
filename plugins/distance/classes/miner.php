@@ -13,13 +13,16 @@ use \report_distance\models\transational_distance;
 
 class report_distance_miner
 {
+	private $chunk_size = 500;
+
 	public function __construct() {}
 
-	public function init() 
+	public function init()
 	{
 		global $DB;
 
 		$DB->delete_records(transational_distance::table);
+		$this->purge_temp_data();
 
 		return $this;
 	}
@@ -120,19 +123,40 @@ class report_distance_miner
 			$rs = $DB->get_recordset_sql($model::get);
 		}
 
+		// chunk size buffer
+		$buffer = [];
+
 		foreach ($rs as $record) {
 			if (isset($handler)) {
 				$record = $handler($record);
 			}
 
-			try {
-				$DB->insert_record($model::table, $record);
-			}
-			catch (dml_write_exception $e) {
-				cli_problem($e->debuginfo);
+			$buffer[] = $record;
+
+			if (count($buffer) >= $this->chunk_size) {
+				$this->store_results($model::table, $buffer);
 			}
 		}
 
+		if (count($buffer)) {
+			$this->store_results($model::table, $buffer);
+		}
+
 		$rs->close();
+	}
+
+	private function store_results($table, &$buffer)
+	{
+		global $DB;
+
+		try {
+			$DB->insert_records($table, $buffer);
+		}
+		catch (dml_write_exception $e) {
+			cli_problem($e->debuginfo);
+		}
+		finally {
+			$buffer = [];
+		}
 	}
 }

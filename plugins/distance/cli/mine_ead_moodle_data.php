@@ -6,7 +6,7 @@ require_once($CFG->libdir.'/clilib.php');
 use report_distance\models\mdl_course_categories;
 
 $course_ids = mdl_course_categories::get_course_list();
-$report = new report_distance_miner();
+$report = (new report_distance_miner())->init();
 
 // shared tables (should be views, but...)
 echo "mounting students...\n";
