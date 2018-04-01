@@ -5,6 +5,8 @@ require_once($CFG->libdir.'/clilib.php');
 
 use report_distance\models\mdl_course_categories;
 
+echo "booting...\n";
+
 $course_ids = mdl_course_categories::get_course_list();
 $report = (new report_distance_miner())->init();
 
@@ -16,12 +18,12 @@ echo "mounting teachers...\n";
 $report->populate_teachers();
 
 echo "mounting posts...\n";
-$report->populate_posts();
-
+$report->populate_posts(); 
 
 foreach($course_ids as $id) {
 	try {
 		// specific tables (should be views, but...)
+		echo "STARTING FOR $id...\n";
 		echo "mounting basis...\n";
 		$report->populate_base($id);
 
@@ -40,8 +42,6 @@ foreach($course_ids as $id) {
 		echo "calculating transational distance...\n";
 		$report->populate_transational_distance($id);
 
-		echo "cleaning temporary data...\n";
-		$report->purge_temp_data();
 	}
 	catch (dml_read_exception $e) {
 		cli_problem($e->debuginfo);
@@ -50,3 +50,8 @@ foreach($course_ids as $id) {
 		echo "DONE!\n";
 	}
 }
+
+echo "cleaning temporary data...\n";
+$report->purge_temp_data();
+
+echo "FINISH.\n";
