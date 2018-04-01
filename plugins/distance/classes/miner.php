@@ -13,7 +13,7 @@ use \report_distance\models\transational_distance;
 
 class report_distance_miner
 {
-	private $chunk_size = 500;
+	private $chunk_size = 1000;
 
 	public function __construct() {}
 
