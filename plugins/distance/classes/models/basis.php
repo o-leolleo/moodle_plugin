@@ -55,12 +55,12 @@ class basis
 
 	public static function calculate_end_date($semester)
 	{
-		$year = substr($semester, 4);
+		$year = substr($semester, 0, 4);
 		$period = substr($semester, -1);
 
-		$dateString = $period == 1 ? $year."-06-30" : $year."-12-31";
+		$dateString = $period == 1 ? $year."-06-30" : $year."-12-31"; 
 
-		return (new Datetime($dateString))->getTimestamp();
+		return (string)(new Datetime($dateString))->getTimestamp();
 	}
 
 	public static function handle_semester($semester)
@@ -76,7 +76,7 @@ class basis
 		return function($record) use ($first_semester) {
 			$record->semestre = self::handle_semester($record->semestre);
 			$record->periodo  = self::calculate_period($record->semestre, $first_semester->name);
-			$record->data_fim = self::calculate_end_date($record->semestre, $record->periodo);
+			$record->data_fim = self::calculate_end_date($record->semestre);
 
 			return $record;
 		};

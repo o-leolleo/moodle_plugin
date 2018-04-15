@@ -13,7 +13,7 @@ use \report_distance\models\transational_distance;
 
 class report_distance_miner
 {
-	private $chunk_size = 1000;
+	private $chunk_size = 10000;
 
 	public function __construct() {}
 
@@ -69,7 +69,6 @@ class report_distance_miner
 		return $this;
 	}
 
-	// TODO course_id ainda não existe
 	public function populate_course_ids($course_id)
 	{
 		$this->populate(course_id::class, $course_id);
@@ -77,7 +76,6 @@ class report_distance_miner
 		return $this;
 	}
 
-	// TODO log_reduzido ainda não existe
 	public function populate_log_reduzido($course_id)
 	{
 		$this->populate(log_buffer::class, $course_id);
@@ -134,11 +132,13 @@ class report_distance_miner
 			$buffer[] = $record;
 
 			if (count($buffer) >= $this->chunk_size) {
+				echo "\tclearing buffer...\n";
 				$this->store_results($model::table, $buffer);
 			}
 		}
 
 		if (count($buffer)) {
+			echo "\tclearing buffer...\n";
 			$this->store_results($model::table, $buffer);
 		}
 

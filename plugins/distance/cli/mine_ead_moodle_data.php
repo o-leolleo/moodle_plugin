@@ -10,7 +10,7 @@ echo "booting...\n";
 $course_ids = mdl_course_categories::get_course_list();
 $report = (new report_distance_miner())->init();
 
-// shared tables (should be views, but...)
+ //shared tables (should be views, but...)
 echo "mounting students...\n";
 $report->populate_students();
 
