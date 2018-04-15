@@ -20,6 +20,8 @@ $report->populate_teachers();
 echo "mounting posts...\n";
 $report->populate_posts();
 
+$course_ids = [ 3 ];
+
 foreach($course_ids as $id) {
 	try {
 		// specific tables (should be views, but...)
