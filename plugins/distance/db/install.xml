@@ -183,8 +183,8 @@
         <FIELD NAME="var13c" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Quantidade de acessos do(a) aluno(a) ao ambiente por turno (Noite)"/>
         <FIELD NAME="var13d" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Quantidade de acessos do(a) aluno(a) ao ambiente por turno (Madrugada)"/>
         <FIELD NAME="var18" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Quantidade de acessos do(a) aluno(a) ao ambiente no período da disciplina"/>
-        <FIELD NAME="var26" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Quantidade média de acessos de um(a) aluno(a) aos diferentes tipos de recursos disponibilizados (página web, vídeo, pdfs...)."/>
-        <FIELD NAME="var27" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Quantidade média de acessos de um(a) aluno(a) aos diferentes tipos de atividades disponibilizadas (webquest, forum, quiz, ...)."/>
+        <FIELD NAME="var26" TYPE="number" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" DECIMALS="3" COMMENT="Quantidade média de acessos de um(a) aluno(a) aos diferentes tipos de recursos disponibilizados (página web, vídeo, pdfs...)."/>
+        <FIELD NAME="var27" TYPE="number" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" DECIMALS="3" COMMENT="Quantidade média de acessos de um(a) aluno(a) aos diferentes tipos de atividades disponibilizadas (webquest, forum, quiz, ...)."/>
         <FIELD NAME="course_id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>

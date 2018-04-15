@@ -18,9 +18,7 @@ echo "mounting teachers...\n";
 $report->populate_teachers();
 
 echo "mounting posts...\n";
-$report->populate_posts();
-
-$course_ids = [ 3 ];
+$report->populate_posts(); 
 
 foreach($course_ids as $id) {
 	try {
