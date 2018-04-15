@@ -13,7 +13,7 @@ use \local_distance\models\transational_distance;
 
 class local_distance_miner
 {
-	private $chunk_size = 1000;
+	private $chunk_size = 10000;
 
 	public function __construct() {}
 
@@ -69,7 +69,6 @@ class local_distance_miner
 		return $this;
 	}
 
-	// TODO course_id ainda não existe
 	public function populate_course_ids($course_id)
 	{
 		$this->populate(course_id::class, $course_id);
@@ -77,7 +76,6 @@ class local_distance_miner
 		return $this;
 	}
 
-	// TODO log_reduzido ainda não existe
 	public function populate_log_reduzido($course_id)
 	{
 		$this->populate(log_buffer::class, $course_id);
@@ -117,7 +115,7 @@ class local_distance_miner
 		if (isset($course_id)) {
 			// TODO  the references to the same value should be
 			// replaced for something more elegant in the future
-			$rs = $DB->get_recordset_sql($model::get, [$course_id, $course_id, $course_id, $course_id]);
+			$rs = $DB->get_recordset_sql($model::get, [$course_id, $course_id, $course_id]);
 		}
 		else {
 			$rs = $DB->get_recordset_sql($model::get);
@@ -134,11 +132,13 @@ class local_distance_miner
 			$buffer[] = $record;
 
 			if (count($buffer) >= $this->chunk_size) {
+				echo "\tclearing buffer...\n";
 				$this->store_results($model::table, $buffer);
 			}
 		}
 
 		if (count($buffer)) {
+			echo "\tclearing buffer...\n";
 			$this->store_results($model::table, $buffer);
 		}
 
