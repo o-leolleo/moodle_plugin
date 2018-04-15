@@ -7,6 +7,7 @@ class minified_log
 
 	const get = "
 		SELECT
+			course_id,
 			time,
 			userid,
 			course,
@@ -14,5 +15,7 @@ class minified_log
 			action,
 			ip,
 			cmid
-		FROM {".log_buffer::table."}";
+		FROM {".log_buffer::table."}
+		WHERE course_id = ?
+		";
 }

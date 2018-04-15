@@ -7,53 +7,28 @@ class log_buffer
 
 	// TODO verificar se estes últimos
 	// campos estão repetidos
+	// TODO retirar a utilização de TRIM
 	const get = "
 		SELECT
 			id,
 			timecreated `time`,
 			userid,
-			courseid `course_id`,
-			component,
+			courseid `course`,
+			? `course_id`,
+			TRIM(LEADING 'mod_' FROM component) `module`,
 			action,
 			ip,
 			objectid `cmid`
 		FROM {logstore_standard_log}
-		WHERE courseid
-		IN (
-			SELECT disciplina_id FROM {".course_id::table."} WHERE course_id = ?
+		WHERE (
+			action='loggedout' OR
+			action='loggedin' OR
+			courseid IN (
+				SELECT disciplina_id FROM {".course_id::table."} WHERE course_id = ?
+			)
 		)
-		AND userid
-		IN (
-			SELECT aluno_id FROM {".aluno_ids::table."} WHERE course_id = ?
-		)
-		UNION
-		SELECT
-			id,
-			timecreated,
-			userid,
-			courseid `course_id`,
-			component,
-			action,
-			ip,
-			objectid `cmid`
-		FROM {logstore_standard_log}
-		WHERE action='loggedout'
 		AND userid IN (
 			SELECT aluno_id FROM {".aluno_ids::table."} WHERE course_id = ?
 		)
-		UNION
-		SELECT
-			id,
-			timecreated,
-			userid,
-			courseid `course_id`,
-			component,
-			action,
-			ip,
-			objectid `cmid`
-		FROM {logstore_standard_log}
-		WHERE action='loggedin'
-		AND userid IN (
-			SELECT aluno_id FROM {".aluno_ids::table."} WHERE course_id = ?
-		)";
+	";
 }
