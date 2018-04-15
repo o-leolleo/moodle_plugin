@@ -10,6 +10,7 @@ use \local_distance\models\course_id;
 use \local_distance\models\log_buffer;
 use \local_distance\models\minified_log;
 use \local_distance\models\transational_distance;
+use \local_distance\models\mdl_course_categories;
 
 class local_distance_miner
 {
@@ -21,10 +22,61 @@ class local_distance_miner
 	{
 		global $DB;
 
+		echo "booting...\n";
 		$DB->delete_records(transational_distance::table);
 		$this->purge_temp_data();
 
 		return $this;
+	}
+
+	public function mine()
+	{
+		$course_ids = mdl_course_categories::get_course_list();
+
+		// shared tables (should be views, but...)
+		echo "mounting students...<br>".PHP_EOL;
+		$this->populate_students();
+
+		echo "mounting teachers...<br>".PHP_EOL;
+		$this->populate_teachers();
+
+		echo "mounting posts...<br>".PHP_EOL;
+		$this->populate_posts();
+
+		foreach($course_ids as $id) {
+			try {
+				// specific tables (should be views, but...)
+				echo "STARTING FOR $id...<br>".PHP_EOL;
+				echo "mounting basis...<br>".PHP_EOL;
+				$this->populate_base($id);
+
+				echo "mounting disciplines...<br>".PHP_EOL;
+				$this->populate_disciplines($id);
+
+				echo "mounting aluno_ids...<br>".PHP_EOL;
+				$this->populate_alunos_ids($id);
+
+				echo "mounting id_disciplinas...<br>".PHP_EOL;
+				$this->populate_course_ids($id);
+
+				echo "populating the fucking log...<br>".PHP_EOL;
+				$this->populate_log_reduzido($id);
+
+				echo "calculating transational distance...<br>".PHP_EOL;
+				$this->populate_transational_distance($id);
+			}
+			catch (dml_read_exception $e) {
+				cli_problem($e->debuginfo);
+			}
+			finally {
+				echo "DONE!<br>".PHP_EOL;
+			}
+		}
+
+		echo "cleaning temporary data...<br>".PHP_EOL;
+		$this->purge_temp_data();
+
+		echo "FINISH.<br>".PHP_EOL;
 	}
 
 	public function populate_students()
@@ -132,13 +184,13 @@ class local_distance_miner
 			$buffer[] = $record;
 
 			if (count($buffer) >= $this->chunk_size) {
-				echo "\tclearing buffer...\n";
+				echo "\tclearing buffer...<br>".PHP_EOL;
 				$this->store_results($model::table, $buffer);
 			}
 		}
 
 		if (count($buffer)) {
-			echo "\tclearing buffer...\n";
+			echo "\tclearing buffer...<br>".PHP_EOL;
 			$this->store_results($model::table, $buffer);
 		}
 
