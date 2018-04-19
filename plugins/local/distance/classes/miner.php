@@ -184,13 +184,11 @@ class local_distance_miner
 			$buffer[] = $record;
 
 			if (count($buffer) >= $this->chunk_size) {
-				echo "\tclearing buffer...<br>".PHP_EOL;
 				$this->store_results($model::table, $buffer);
 			}
 		}
 
 		if (count($buffer)) {
-			echo "\tclearing buffer...<br>".PHP_EOL;
 			$this->store_results($model::table, $buffer);
 		}
 
