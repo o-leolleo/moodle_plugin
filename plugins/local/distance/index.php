@@ -12,13 +12,14 @@ $aluno_id        		= optional_param('aluno_id', 0, PARAM_INT);		// Student ID.
 
 //==============================================================================
 // SET PAGELAYOUT
-//admin_externalpage_setup('localdistance', '', null, '',['pagelayout'=>'base']);
+//admin_externalpage_setup('localdistance', '', null, '',['pagelayout'=>'report']);
 require_login();
+
 $PAGE->set_context(context_system::instance());
 $PAGE->set_url('/local/distance/index.php');
-$PAGE->set_title('My modules page title');
-$PAGE->set_heading('My modules page heading');
-
+//$PAGE->set_title('Local Plugin');
+$PAGE->set_heading(get_string('pluginname', 'local_distance'));
+$PAGE->set_pagelayout('report');
 
 //==============================================================================
 // database
@@ -40,8 +41,8 @@ $base_DB = 'mdl_transational_distance';
 
 //==============================================================================
 // GET ALL DISCIPLINES FROM BASE
-$select = 	'SELECT DISTINCT 	`disciplina_nome` AS `Nome`,
-								`disciplina_id` AS `Id`';
+$select = 	'SELECT DISTINCT  	`disciplina_id` AS `Id`,
+					`disciplina_nome` AS `Nome`';	
 $from   =	'FROM '.$base_DB;
 $query  = $select.' '.$from;
 
@@ -50,6 +51,7 @@ $disciplinas_DB = $DB->get_records_sql($query);
 //==============================================================================
 // CREATE ARRAY WITH ALL DISCIPLINE FROM SQL STATEMENT
 $disciplinas = array();
+$disciplinas[0] = "Selecione uma Disciplina";
 foreach($disciplinas_DB as $disciplina)
 {
 	$disciplinas[$disciplina->id] = $disciplina->nome;
@@ -139,6 +141,7 @@ if(!empty($disciplina_id))
 	//==============================================================================
 	// CREATE ARRAY WICH CONTAIN ALL DISCIPLINES GIVEN BY DATABASE
 	$alunos = array();
+	$alunos[0] = "Selecione um aluno";
 	foreach($alunos_DB as $aluno)
 	{
 		$alunos[$aluno->id] = $aluno->nome;
@@ -155,18 +158,18 @@ if(!empty($aluno_id) && !empty($disciplina_id))
 
 	// GRAPH: RELACIONADAS AOS FORUNS
 	$graph01_select = 'SELECT	`VAR01` as `0`,
-								`VAR31` as `1`,
-								`VAR34` as `2`,
-								`VAR39` as `3`';
+					`VAR31` as `1`,
+					`VAR34` as `2`,
+					`VAR39` as `3`';
 
 	// GRAPH: RELACIONADAS AOS ACESSOS
 	$graph02_select = 'SELECT	`VAR13a` as `0`,
-								`VAR13b` as `1`,
-								`VAR13c` as `2`,
-								`VAR13d` as `3`,
-								`VAR18`  as `4`,
-								`VAR26`  as `5`,
-							   	`VAR27`  as `6`';
+					`VAR13b` as `1`,
+					`VAR13c` as `2`,
+					`VAR13d` as `3`,
+					`VAR18`  as `4`,
+					`VAR26`  as `5`,
+					`VAR27`  as `6`';
 	// CONDICTION
 	$from = 	'FROM '.$base_DB;
 	$where=		'WHERE `aluno_id` = '.$aluno_id
@@ -216,12 +219,15 @@ if(!empty($aluno_id) && !empty($disciplina_id))
 //==============================================================================
 // HEADER
 echo $OUTPUT->header();
-echo $OUTPUT->heading(get_string('pluginname', 'local_distance'));
+if(!empty($disciplina_id))
+	echo $OUTPUT->heading($disciplinas[$disciplina_id]);
+else
+	echo $OUTPUT->heading('Por favor, selecione um curso:');
 
 
 //==============================================================================
 // SMALL EXPLAIN IN TOP
-echo $OUTPUT->box(get_string('distance_desc', 'local_distance'), 'generalbox mdl-align');
+//echo $OUTPUT->box(get_string('distance_desc', 'local_distance'), 'generalbox mdl-align');
 
 //==============================================================================
 // CREATE A FORM
@@ -230,8 +236,21 @@ echo html_writer::start_tag('form', array('id' => 'selectform', 'method' => 'get
 
 //==============================================================================
 // CREATE A DROP MENU WITH ALL DISCIPLINE
-echo $OUTPUT->box(get_string('distance_course_input', 'local_distance'),'generalbox');
-echo html_writer::select($disciplinas, 'disciplina_id', $disciplina_id, false, array('type'=>'hidden','onchange' => 'this.form.submit()'));
+if(empty($disciplina_id))
+{
+	echo $OUTPUT->box(get_string('distance_course_input', 'local_distance'),'generalbox');
+	echo html_writer::select($disciplinas, 'disciplina_id', $disciplina_id, false, array('type'=>'hidden','onchange' => 'this.form.submit()'));
+}
+
+//==============================================================================
+// CLOSE FORM
+echo html_writer::end_tag('form');
+echo html_writer::end_div('form_div');
+
+//==============================================================================
+// CREATE A FORM
+echo html_writer::start_div('form_div', array('class' => 'moodle-dialogue-base'));
+echo html_writer::start_tag('form', array('id' => 'selectform', 'method' => 'post', 'action' => ''));
 
 //==============================================================================
 // CREATE A DROP MENU WITH ALL STUDENT
@@ -256,7 +275,11 @@ if(!empty($disciplina_id))
 	$chart->add_series($foruns_serie);
 	if(!empty($aluno_id) && $aluno_exist)
 		$chart->add_series($aluno_serie_01);
-	$chart->set_labels(['VAR01', 'VAR31', 'VAR34', 'VAR39']);
+	$chart->set_labels([	'Postagens de um(a) aluno(a) em fóruns.', 
+				'Acessos da(o) aluna(o) aos fóruns.',
+				'Tópicos criados pelo(a) aluno(a) em fóruns.',
+				'Resposta(s) a outros(as) alunos(as).']);
+
 	echo $OUTPUT->render($chart);
 
 	echo html_writer::tag('h3',get_string('distance_environment_title', 'local_distance'));
@@ -264,7 +287,15 @@ if(!empty($disciplina_id))
 	$ambiente_chart->add_series($ambiente_serie);
 	if(!empty($aluno_id) && $aluno_exist)
 		$ambiente_chart->add_series($aluno_serie_02);
-	$ambiente_chart->set_labels(['VAR13a', 'VAR13b', 'VAR13c', 'VAR13d','VAR18','VAR26','VAR27']);
+	
+	$ambiente_chart->set_labels([	'Acessos do(a) aluno(a) ao ambiente (Manhã)',
+					'Acessos do(a) aluno(a) ao ambiente (Tarde)',
+					'Acessos do(a) aluno(a) ao ambiente (Tarde)',
+					'Acessos do(a) aluno(a) ao ambiente (Madrugada)',
+					'Acessos do(a) aluno(a) ao ambiente no período da disciplina',
+					'Média de acessos de um(a) aluno(a) aos recursos',
+					'Média de acessos de um(a) aluno(a) as atividades']);
+
 	echo $OUTPUT->render($ambiente_chart);
 
 	//echo '<pre>'; print_r($foruns_array); echo '</pre>';
