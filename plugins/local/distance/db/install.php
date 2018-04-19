@@ -7,4 +7,4 @@ function xmldb_local_distance_install()
 
 // TODO deve executar, porém
 // ainda não foi testado
-xmldb_local_distance_install();
+//xmldb_local_distance_install();
