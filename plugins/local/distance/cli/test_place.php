@@ -7,7 +7,7 @@ $groups = $DB->get_records_sql(\local_distance\models\groups::of_course, [ 13 ])
 
 foreach ($groups as $group) {
 	try {
-		$students = $DB->get_records_sql(\local_distance\models\groups::get_students, [ $group->id ]);
+		$students = $DB->get_records_sql(\local_distance\models\groups::get_students_in_discipline, [ $group->id, 4 ]);
 		var_dump($students);
 	}
 	catch (dml_read_exception $e){
