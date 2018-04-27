@@ -1,8 +1,6 @@
 <?php
 namespace local_distance\task;
 
-use \local_distance\miner;
-
 class mine_ead_moodle_data extends \core\task\scheduled_task
 {
 	public function get_name() {
@@ -10,6 +8,6 @@ class mine_ead_moodle_data extends \core\task\scheduled_task
 	}
 
 	public function execute() {
-		(new miner())->init()->mine();
+		(new \local_distance_miner())->init()->mine();
 	}
 }

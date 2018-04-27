@@ -17,4 +17,4 @@ $string['distance_course_input'] 	= "Selecione o curso:";
 $string['distance_student_input'] 	= "Selecione o aluno:";
 $string['distance_group_input'] 	= "Selecione o pólo:";
 
-
+$string['task_desc'] = "";
