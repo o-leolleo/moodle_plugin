@@ -7,8 +7,9 @@ require_once($CFG->libdir.'/adminlib.php');
 
 //==============================================================================
 // GET ID FROM URL
-$disciplina_id          = optional_param('disciplina_id', 0, PARAM_INT);// Course ID.
-$aluno_id        		= optional_param('aluno_id', 0, PARAM_INT);		// Student ID.
+$disciplina_id          = optional_param('disciplina_id', 0, PARAM_INT);	// Course ID.
+$aluno_id        	= optional_param('aluno_id', 0, PARAM_INT);		// Student ID.
+$group_id		= optional_param('group_id', 0, PARAM_INT);             // Group ID.
 
 //==============================================================================
 // SET PAGELAYOUT
@@ -125,66 +126,147 @@ if(!empty($disciplina_id))
 // GET ALL STUDENT FROM TABLE AND PUT IN ARRAY
 if(!empty($disciplina_id))
 {
+
+	//=============================================================================
+	// GROUP 
+	//-----------------------------------------------------------------------------	
+	
 	//=============================================================================
 	// SQL STATEMENTS
-	$select = 'SELECT 	`aluno_nome` AS `Nome`,
-				`aluno_id` AS `Id`';
+	$select = 'SELECT 	`id` AS `Id`,
+				`name` AS `Nome`';
 
-	$from  = 'FROM '.$base_DB;
-	$where = 'WHERE `disciplina_id` = '.$disciplina_id;
+	$from  = 'FROM `mdl_groups`';
+	$where = 'WHERE `courseid` = '.$disciplina_id;
 
 	//==============================================================================
 	// GET RERCORD FROM TABLE
 	$query = $select.' '.$from.' '.$where;
-	$alunos_DB = $DB->get_records_sql($query);
+	$alunos_group_DB = $DB->get_records_sql($query);
+	
+	//==============================================================================
+	// CREATE ARRAY WICH CONTAIN ALL DISCIPLINES GIVEN BY DATABASE
+	$alunos_group = array();
+	$alunos_group[0] = "Selecione um pólo:";
+	foreach($alunos_group_DB as $aluno_group)
+	{
+		$alunos_group[$aluno_group->id] = $aluno_group->nome;
+	}
 
+	//=============================================================================
+	// STUDENT
+	//-----------------------------------------------------------------------------
+	
+	//=============================================================================
+	// SQL STATEMENTS
+	$select = 'SELECT 	`aluno_id` AS `Id`, `aluno_nome` AS `Nome`';
+	$from  = 'FROM '.$base_DB;
+	$where = 'WHERE `disciplina_id` = '.$disciplina_id;
+	
+	//==============================================================================
+	// GET RERCORD FROM TABLE
+	$query = $select.' '.$from.' '.$where;
+	$alunos_DB = $DB->get_records_sql($query);
+	
+	//=============================================================================
+	// SQL STATEMENTS
+	// SELECT `groupid`,`userid` FROM `mdl_groups_members` WHERE 1
+	$select = 'SELECT `userid` AS `id`';
+
+	$from  = 'FROM `mdl_groups_members`';
+	$where = 'WHERE `groupid` = '.$group_id;
+
+	//==============================================================================
+	// GET RERCORD FROM TABLE
+	$query = $select.' '.$from.' '.$where;
+	$alunos_group_DB = $DB->get_records_sql($query);
+		
+	
 	//==============================================================================
 	// CREATE ARRAY WICH CONTAIN ALL DISCIPLINES GIVEN BY DATABASE
 	$alunos = array();
-	$alunos[0] = "Selecione um aluno";
+	
 	foreach($alunos_DB as $aluno)
 	{
-		$alunos[$aluno->id] = $aluno->nome;
+		$alunos_disciplina[$aluno->id] = $aluno->nome;
 	}
+	if(empty($alunos_group_DB))
+	{
+		$alunos = $alunos_disciplina;
+	}
+	else
+	{
+		foreach($alunos_group_DB as $aluno)
+		{
+			if(!empty($alunos_disciplina[$aluno->id]))
+				$alunos[$aluno->id] = $alunos_disciplina[$aluno->id];
+		}
+
+	}
+	asort($alunos);
+	//array_push($alunos, "Selecione um aluno");
+	//$alunos[0] = "Selecione um aluno";
 }
 
 // CHECK IF STUDENT EXIST IN TABLE, GET HIS VALUES FROM TABLE
 // THAN CREATE GRAPH SERIE
-if(!empty($aluno_id) && !empty($disciplina_id))
+if(!empty($aluno_id) && !empty($disciplina_id)) 
 {
 	//==========================================================================
 	// SQL STATEMENTS
-	// TODO: JOIN THIS TWO SELECT IN ONLY ONE
-
-	// GRAPH: RELACIONADAS AOS FORUNS
-	$graph01_select = 'SELECT	`VAR01` as `0`,
-					`VAR31` as `1`,
-					`VAR34` as `2`,
-					`VAR39` as `3`';
-
-	// GRAPH: RELACIONADAS AOS ACESSOS
-	$graph02_select = 'SELECT	`VAR13a` as `0`,
-					`VAR13b` as `1`,
-					`VAR13c` as `2`,
-					`VAR13d` as `3`,
-					`VAR18`  as `4`,
-					`VAR26`  as `5`,
-					`VAR27`  as `6`';
-	// CONDICTION
-	$from = 	'FROM '.$base_DB;
-	$where=		'WHERE `aluno_id` = '.$aluno_id
-			.' AND `disciplina_id` = '.$disciplina_id;
+	
+	if($group_id == 0)
+	{
+		// CONDICTION WITHOUT GROUP
+		$select = 	'SELECT *';
+		$from   = 	'FROM '.$base_DB;
+		$where  =	'WHERE `aluno_id` = '.$aluno_id
+				.' AND `disciplina_id` = '.$disciplina_id;
+	}		
+	else
+	{
+		// CONDICTION WITH GROUP SELECTED
+		$select = 	'SELECT *';
+		$from   = 	'FROM mdl_groups_members';
+		$where  =	'WHERE `userid` = '.$aluno_id
+				.' AND `groupid` = '.$group_id;
+	}
 
 	//==========================================================================
 	// FIRST CHECK IF STUDENT EXIST IN TABLE
-	$query = $graph01_select.' '.$from.' '.$where;
+	$query = $select.' '.$from.' '.$where;
+	
 	$aluno_exist = $DB->record_exists_sql($query);
-
+	
 	// TODO: CREATE TWO ARRAY WITH DATA FROM ONLY ONE OBJECT
 	if($aluno_exist)
 	{
+		//==========================================================================
+		// SQL STATEMENTS
+		// CONDICTION
+		$from = 	'FROM '.$base_DB;
+		$where=		'WHERE `aluno_id` = '.$aluno_id
+				.' AND `disciplina_id` = '.$disciplina_id;
+
+		//----------------------------------------------------------------------------
+		// TODO: JOIN THIS TWO SELECT IN ONLY ONE	
+		// GRAPH: RELACIONADAS AOS FORUNS
+		$graph01_select = 'SELECT	`VAR01` as `0`,
+						`VAR31` as `1`,
+						`VAR34` as `2`,
+						`VAR39` as `3`';
+
+		// GRAPH: RELACIONADAS AOS ACESSOS
+		$graph02_select = 'SELECT	`VAR13a` as `0`,
+						`VAR13b` as `1`,
+						`VAR13c` as `2`,
+						`VAR13d` as `3`,
+						`VAR18`  as `4`,
+						`VAR26`  as `5`,
+						`VAR27`  as `6`';
+
 		///=====================================================================
-		//
+		// 
 		$query = $graph01_select.' '.$from.' '.$where;
 		$aluno_DB = $DB->get_records_sql($query);
 		$aluno_array = (array) reset($aluno_DB);
@@ -208,7 +290,7 @@ if(!empty($aluno_id) && !empty($disciplina_id))
 }
 
 //==============================================================================
-//    _   _ _____ __  __ _
+//        _   _ _____ __  __ _
 //	 | | | |_   _|  \/  | |
 //	 | |_| | | | | |\/| | |
 //	 |  _  | | | | |  | | |___
@@ -253,8 +335,17 @@ echo html_writer::start_div('form_div', array('class' => 'moodle-dialogue-base')
 echo html_writer::start_tag('form', array('id' => 'selectform', 'method' => 'post', 'action' => ''));
 
 //==============================================================================
-// CREATE A DROP MENU WITH ALL STUDENT
+// CREATE A DROP MENU WITH ALL GROUPS
 if(!empty($disciplina_id))
+{
+	echo $OUTPUT->box(get_string('distance_group_input', 'local_distance'), 'generalbox');
+	echo html_writer::select($alunos_group, 'group_id', $group_id, false, array('onchange' => 'this.form.submit()'));
+}
+
+
+//==============================================================================
+// CREATE A DROP MENU WITH ALL STUDENT
+if(!empty($disciplina_id) && !empty($alunos))
 {
 	echo $OUTPUT->box(get_string('distance_student_input', 'local_distance'), 'generalbox');
 	echo html_writer::select($alunos, 'aluno_id', $aluno_id, false, array('onchange' => 'this.form.submit()'));
@@ -273,12 +364,12 @@ if(!empty($disciplina_id))
 	echo html_writer::tag('h2',get_string('distance_forum_title', 'local_distance'));
 	$chart = new core\chart_bar();
 	$chart->add_series($foruns_serie);
-	if(!empty($aluno_id) && $aluno_exist)
+	if(!empty($aluno_id) && $aluno_exist )
 		$chart->add_series($aluno_serie_01);
-	$chart->set_labels([	'Postagens de um(a) aluno(a) em fóruns.', 
-				'Acessos da(o) aluna(o) aos fóruns.',
-				'Tópicos criados pelo(a) aluno(a) em fóruns.',
-				'Resposta(s) a outros(as) alunos(as).']);
+	$chart->set_labels([	'Postagens nos fóruns', 
+				'Acessos aos fóruns',
+				'Tópicos criados em fóruns',
+				'Respostas a outros estudantes em fóruns']);
 
 	echo $OUTPUT->render($chart);
 
@@ -288,18 +379,18 @@ if(!empty($disciplina_id))
 	if(!empty($aluno_id) && $aluno_exist)
 		$ambiente_chart->add_series($aluno_serie_02);
 	
-	$ambiente_chart->set_labels([	'Acessos do(a) aluno(a) ao ambiente (Manhã)',
-					'Acessos do(a) aluno(a) ao ambiente (Tarde)',
-					'Acessos do(a) aluno(a) ao ambiente (Tarde)',
-					'Acessos do(a) aluno(a) ao ambiente (Madrugada)',
-					'Acessos do(a) aluno(a) ao ambiente no período da disciplina',
-					'Média de acessos de um(a) aluno(a) aos recursos',
-					'Média de acessos de um(a) aluno(a) as atividades']);
+	$ambiente_chart->set_labels([	'Acessos turno Manhã',
+					'Acessos turno Tarde',
+					'Acessos turno Noite',
+					'Acessos turno Madrugada',
+					'Total de acessos à disciplina',
+					'Média de acessos aos recursos',
+					'Média de acessos às atividades']);
 
 	echo $OUTPUT->render($ambiente_chart);
 
-	//echo '<pre>'; print_r($foruns_array); echo '</pre>';
-	//echo '<pre>'; print_r($ambiente_serie); echo '</pre>';
+	//echo '<pre>'; print_r($group_id); echo '</pre>';
+	//echo '<pre>'; print_r($aluno_id); echo '</pre>';
 }
 echo html_writer::end_div('chart_div');
 
