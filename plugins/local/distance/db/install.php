@@ -1,10 +1,12 @@
 <?php
+use local_distance\job\miner;
 
 function xmldb_local_distance_install()
 {
-	(new local_distance_miner())->init()->mine();
+	$miner_job = new miner();
+	\core\task\manager::queue_adhoc_task($miner_job);
+
+	return true;
 }
 
-// TODO deve executar, porém
-// ainda não foi testado
-//xmldb_local_distance_install();
+xmldb_local_distance_install();

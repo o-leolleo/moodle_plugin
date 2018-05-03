@@ -18,11 +18,9 @@ class local_distance_miner
 
 	public function __construct() {}
 
-	public function init()
-	{
+	public function init() {
 		global $DB;
 
-		echo "booting...\n";
 		$DB->delete_records(transational_distance::table);
 		$this->purge_temp_data();
 
@@ -34,49 +32,31 @@ class local_distance_miner
 		$course_ids = mdl_course_categories::get_course_list();
 
 		// shared tables (should be views, but...)
-		echo "mounting students...<br>".PHP_EOL;
-		$this->populate_students();
-
-		echo "mounting teachers...<br>".PHP_EOL;
-		$this->populate_teachers();
-
-		echo "mounting posts...<br>".PHP_EOL;
-		$this->populate_posts();
+		$this
+			->populate_students()
+			->populate_teachers()
+			->populate_posts();
 
 		foreach($course_ids as $id) {
 			try {
 				// specific tables (should be views, but...)
-				echo "STARTING FOR $id...<br>".PHP_EOL;
-				echo "mounting basis...<br>".PHP_EOL;
-				$this->populate_base($id);
-
-				echo "mounting disciplines...<br>".PHP_EOL;
-				$this->populate_disciplines($id);
-
-				echo "mounting aluno_ids...<br>".PHP_EOL;
-				$this->populate_alunos_ids($id);
-
-				echo "mounting id_disciplinas...<br>".PHP_EOL;
-				$this->populate_course_ids($id);
-
-				echo "populating the fucking log...<br>".PHP_EOL;
-				$this->populate_log_reduzido($id);
-
-				echo "calculating transational distance...<br>".PHP_EOL;
-				$this->populate_transational_distance($id);
+				$this
+					->populate_base($id)
+					->populate_disciplines($id)
+					->populate_alunos_ids($id)
+					->populate_course_ids($id)
+					->populate_log_reduzido($id)
+					->populate_transational_distance($id);
 			}
 			catch (dml_read_exception $e) {
 				cli_problem($e->debuginfo);
 			}
-			finally {
-				echo "DONE!<br>".PHP_EOL;
+			catch (Exception $e) {
+				cli_problem($e->getMessage());
 			}
 		}
 
-		echo "cleaning temporary data...<br>".PHP_EOL;
 		$this->purge_temp_data();
-
-		echo "FINISH.<br>".PHP_EOL;
 	}
 
 	public function populate_students()
