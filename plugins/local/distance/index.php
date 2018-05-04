@@ -51,7 +51,6 @@ $disciplinas_DB = $DB->get_records_sql($query);
 //==============================================================================
 // CREATE ARRAY WITH ALL DISCIPLINE FROM SQL STATEMENT
 $disciplinas = array();
-$disciplinas[0] = "Selecione uma Disciplina";
 foreach($disciplinas_DB as $disciplina)
 {
 	$disciplinas[$disciplina->id] = $disciplina->nome;
