@@ -3,28 +3,27 @@ require_once('../../config.php');
 require_once($CFG->dirroot.'/local/distance/locallib.php');
 require_once($CFG->libdir.'/adminlib.php');
 
-//require_login();
 
 //==============================================================================
 // GET ID FROM URL
 $disciplina_id          = optional_param('disciplina_id', 0, PARAM_INT);	// Course ID.
-$aluno_id        	= optional_param('aluno_id', 0, PARAM_INT);		// Student ID.
+$aluno_id        	= optional_param('aluno_id', $USER->id, PARAM_INT);	// Student ID.
 $group_id		= optional_param('group_id', 0, PARAM_INT);             // Group ID.
 
 //==============================================================================
 // SET PAGELAYOUT
-//admin_externalpage_setup('localdistance', '', null, '',['pagelayout'=>'report']);
 require_login();
 
 $PAGE->set_context(context_system::instance());
 $PAGE->set_url('/local/distance/index.php');
-//$PAGE->set_title('Local Plugin');
+$PAGE->set_title('PLugin Gráficos do curso');
 $PAGE->set_heading(get_string('pluginname', 'local_distance'));
 $PAGE->set_pagelayout('report');
 
 //==============================================================================
-// database
-global $DB;
+// GLOBAL VARIABLES 
+global $DB;	// DATABASE ACESS
+global $USER;	// USER INFORMATION
 
 //==============================================================================
 // TODO: GET THIS FROM USER
@@ -81,7 +80,6 @@ if(!empty($disciplina_id))
 	$where= 'WHERE `disciplina_id` ='.$disciplina_id;
 
 	$query = $select.' '.$from.' '.$where;
-	//$query = 'SELECT AVG(`var01`) FROM mdl_transational_distance where disciplina_id=90';
 
 	// GET FROM TABLE
 	$mean_var_DB       = $DB->get_records_sql($query);
@@ -126,7 +124,7 @@ if(!empty($disciplina_id))
 // GET ALL STUDENT FROM TABLE AND PUT IN ARRAY
 if(!empty($disciplina_id))
 {
-
+	// TODO: CREATE ARRAY WITH AVERAGE STUDENT INFO PER GROUP
 	//=============================================================================
 	// GROUP 
 	//-----------------------------------------------------------------------------	
@@ -145,7 +143,7 @@ if(!empty($disciplina_id))
 	$alunos_group_DB = $DB->get_records_sql($query);
 	
 	//==============================================================================
-	// CREATE ARRAY WICH CONTAIN ALL DISCIPLINES GIVEN BY DATABASE
+	// CREATE ARRAY WHICH CONTAIN ALL DISCIPLINES GIVEN BY DATABASE
 	$alunos_group = array();
 	$alunos_group[0] = "Selecione um pólo:";
 	foreach($alunos_group_DB as $aluno_group)
@@ -185,27 +183,28 @@ if(!empty($disciplina_id))
 	//==============================================================================
 	// CREATE ARRAY WICH CONTAIN ALL DISCIPLINES GIVEN BY DATABASE
 	$alunos = array();
-	
-	foreach($alunos_DB as $aluno)
-	{
-		$alunos_disciplina[$aluno->id] = $aluno->nome;
-	}
-	if(empty($alunos_group_DB))
-	{
-		$alunos = $alunos_disciplina;
-	}
-	else
-	{
-		foreach($alunos_group_DB as $aluno)
+	if(!empty($alunos_DB))
+	{	
+		foreach($alunos_DB as $aluno)
 		{
-			if(!empty($alunos_disciplina[$aluno->id]))
-				$alunos[$aluno->id] = $alunos_disciplina[$aluno->id];
+			$alunos_disciplina[$aluno->id] = $aluno->nome;
 		}
+		if(empty($alunos_group_DB))
+		{
+			$alunos = $alunos_disciplina;
+		}
+		else
+		{
+			foreach($alunos_group_DB as $aluno)
+			{
+				if(!empty($alunos_disciplina[$aluno->id]))
+					$alunos[$aluno->id] = $alunos_disciplina[$aluno->id];
+			}
 
+		}
+		
+		asort($alunos);
 	}
-	asort($alunos);
-	//array_push($alunos, "Selecione um aluno");
-	//$alunos[0] = "Selecione um aluno";
 }
 
 // CHECK IF STUDENT EXIST IN TABLE, GET HIS VALUES FROM TABLE
@@ -298,100 +297,48 @@ if(!empty($aluno_id) && !empty($disciplina_id))
 //
 //==============================================================================
 
+
 //==============================================================================
 // HEADER
 echo $OUTPUT->header();
-if(!empty($disciplina_id))
+
+// CHECK IF 'DISCIPLINA' WAS ALREADY CHOSEN AND EXIST
+if(!empty($disciplinas[$disciplina_id]))
+{
+	// DISPLAY THE NAME OF 'DISCIPLINA'
 	echo $OUTPUT->heading($disciplinas[$disciplina_id]);
-else
-	echo $OUTPUT->heading('Por favor, selecione um curso:');
 
-
-//==============================================================================
-// SMALL EXPLAIN IN TOP
-//echo $OUTPUT->box(get_string('distance_desc', 'local_distance'), 'generalbox mdl-align');
-
-//==============================================================================
-// CREATE A FORM
-echo html_writer::start_div('form_div', array('class' => 'moodle-dialogue-base'));
-echo html_writer::start_tag('form', array('id' => 'selectform', 'method' => 'get', 'action' => ''));
-
-//==============================================================================
-// CREATE A DROP MENU WITH ALL DISCIPLINE
-if(empty($disciplina_id))
-{
-	echo $OUTPUT->box(get_string('distance_course_input', 'local_distance'),'generalbox');
-	echo html_writer::select($disciplinas, 'disciplina_id', $disciplina_id, false, array('type'=>'hidden','onchange' => 'this.form.submit()'));
-}
-
-//==============================================================================
-// CLOSE FORM
-echo html_writer::end_tag('form');
-echo html_writer::end_div('form_div');
-
-//==============================================================================
-// CREATE A FORM
-echo html_writer::start_div('form_div', array('class' => 'moodle-dialogue-base'));
-echo html_writer::start_tag('form', array('id' => 'selectform', 'method' => 'post', 'action' => ''));
-
-//==============================================================================
-// CREATE A DROP MENU WITH ALL GROUPS
-if(!empty($disciplina_id))
-{
-	echo $OUTPUT->box(get_string('distance_group_input', 'local_distance'), 'generalbox');
-	echo html_writer::select($alunos_group, 'group_id', $group_id, false, array('onchange' => 'this.form.submit()'));
-}
-
-
-//==============================================================================
-// CREATE A DROP MENU WITH ALL STUDENT
-if(!empty($disciplina_id) && !empty($alunos))
-{
-	echo $OUTPUT->box(get_string('distance_student_input', 'local_distance'), 'generalbox');
-	echo html_writer::select($alunos, 'aluno_id', $aluno_id, false, array('onchange' => 'this.form.submit()'));
-}
-
-//==============================================================================
-// CLOSE FORM
-echo html_writer::end_tag('form');
-echo html_writer::end_div('form_div');
-
-echo html_writer::start_div('chart_div', array('class' => 'hero-unit'));
-
-//==============================================================================
-if(!empty($disciplina_id))
-{
-	echo html_writer::tag('h2',get_string('distance_forum_title', 'local_distance'));
-	$chart = new core\chart_bar();
-	$chart->add_series($foruns_serie);
-	if(!empty($aluno_id) && $aluno_exist )
-		$chart->add_series($aluno_serie_01);
-	$chart->set_labels([	'Postagens nos fóruns', 
-				'Acessos aos fóruns',
-				'Tópicos criados em fóruns',
-				'Respostas a outros estudantes em fóruns']);
-
-	echo $OUTPUT->render($chart);
-
-	echo html_writer::tag('h3',get_string('distance_environment_title', 'local_distance'));
-	$ambiente_chart = new core\chart_bar();
-	$ambiente_chart->add_series($ambiente_serie);
-	if(!empty($aluno_id) && $aluno_exist)
-		$ambiente_chart->add_series($aluno_serie_02);
+	// GET CONTEXT 
+	$course_context = context_course::instance($disciplina_id);
 	
-	$ambiente_chart->set_labels([	'Acessos turno Manhã',
-					'Acessos turno Tarde',
-					'Acessos turno Noite',
-					'Acessos turno Madrugada',
-					'Total de acessos à disciplina',
-					'Média de acessos aos recursos',
-					'Média de acessos às atividades']);
+	// IF USER IS TEACHER IN THIS COURSE, SHOW INPUT FORM
+	if(is_enrolled($course_context, $USER->id, 'moodle/course:update'))
+	{
+		include 'view_professor.php';
+	}
+	
+	// IF USER IS ENROLLED IN COURSE, SHOW GRAPHS
+	if(is_enrolled($course_context, $USER->id))
+	{
+		//$PAGE->set_url('/local/distance/index.php',array('aluno_id'->$USER->id));
+		include 'view_graficos.php';
+	}
 
-	echo $OUTPUT->render($ambiente_chart);
-
-	//echo '<pre>'; print_r($group_id); echo '</pre>';
-	//echo '<pre>'; print_r($aluno_id); echo '</pre>';
 }
-echo html_writer::end_div('chart_div');
+else
+{
+	// THE DISCIPLINE CHOSEN DIDN'T EXIST IN TRANSACTIONAL TABLE
+	if(!empty($disciplina_id))
+	{
+		echo $OUTPUT->heading('Sem informações do curso');
+	}
+	else
+	{
+		// THIS VIEW OCCUR WHEN USER OPENS REPORT MENU
+		// MOODLE_ADMINISTRATION->REPORT->Visão Geral dos indicadores
+		echo $OUTPUT->heading('Status do plugin');
+	}
+}
 
+//
 echo $OUTPUT->footer();
