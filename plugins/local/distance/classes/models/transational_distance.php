@@ -92,6 +92,22 @@ class transational_distance
 		GROUP BY b.disciplina_id,b.aluno_id
 	";
 
+	const var19 = "
+	
+	";
+
+	const var20 = "
+	
+	";
+
+	const var21 = "
+
+	";
+
+	const var22 = "
+	
+	";
+
 	const var26 = "
 		SELECT temp.disciplina_id,temp.aluno_id, AVG(temp.Acesso_Objeto) AS 'VAR26'
 		FROM (SELECT b.disciplina_id,b.aluno_id, module,cmid, count(*) AS 'Acesso_Objeto'
