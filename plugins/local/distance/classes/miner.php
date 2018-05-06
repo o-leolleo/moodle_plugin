@@ -15,6 +15,7 @@ use \local_distance\models\mdl_course_categories;
 class local_distance_miner
 {
 	private $chunk_size = 10000;
+	private $miner_log_path = '/var/tmp/moodle_plugin_transational_distance_miner.log';
 
 	public function __construct() {}
 
@@ -49,10 +50,10 @@ class local_distance_miner
 					->populate_transational_distance($id);
 			}
 			catch (dml_read_exception $e) {
-				error_log($e->debuginfo);
+				$this->log_error($e->debuginfo.PHP_EOL);
 			}
 			catch (Exception $e) {
-				error_log($e->getMessage());
+				$this->log_error($e->getMessage().PHP_EOL);
 			}
 		}
 
@@ -183,10 +184,18 @@ class local_distance_miner
 			$DB->insert_records($table, $buffer);
 		}
 		catch (dml_write_exception $e) {
-			error_log($e->debuginfo);
+			$this->log_error($e->debuginfo);
+		}
+		catch (Exception $e) {
+			$this->log_error($e->getMessage());
 		}
 		finally {
 			$buffer = [];
 		}
+	}
+
+	private function log_error($message)
+	{
+		error_log($message, 3, $this->miner_log_path);
 	}
 }
