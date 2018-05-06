@@ -37,6 +37,9 @@ class transational_distance
 		LEFT OUTER JOIN (".self::var13c.") AS VAR13c ON VAR13c.aluno_id     = basis.aluno_id AND VAR13c.disciplina_id = basis.disciplina_id
 		LEFT OUTER JOIN (".self::var13d.") AS VAR13d ON VAR13d.aluno_id     = basis.aluno_id AND VAR13d.disciplina_id = basis.disciplina_id
 		LEFT OUTER JOIN (".self::var18.")  AS VAR18  ON VAR18.aluno_id      = basis.aluno_id AND VAR18.disciplina_id  = basis.disciplina_id
+		LEFT OUTER JOIN (".self::var19.")  AS VAR19  ON VAR19.disciplina_id = basis.disciplina_id AND VAR19.aluno_id  = basis.aluno_id
+		LEFT OUTER JOIN (".self::var21.")  AS VAR21  ON VAR21.disciplina_id = basis.disciplina_id AND VAR21.aluno_id  = basis.aluno_id
+		LEFT OUTER JOIN (".self::var22.")  AS VAR22  ON VAR22.disciplina_id = basis.disciplina_id AND VAR22.aluno_id  = basis.aluno_id
 		LEFT OUTER JOIN (".self::var26.")  AS VAR26  ON VAR26.disciplina_id = basis.disciplina_id AND VAR26.aluno_id  = basis.aluno_id
 		LEFT OUTER JOIN (".self::var27.")  AS VAR27  ON VAR27.disciplina_id = basis.disciplina_id AND VAR27.aluno_id  = basis.aluno_id
 		LEFT OUTER JOIN (".self::var31.")  AS VAR31  ON VAR31.aluno_id      = basis.aluno_id AND VAR31.disciplina_id  = basis.disciplina_id
@@ -93,19 +96,27 @@ class transational_distance
 	";
 
 	const var19 = "
-	
-	";
-
-	const var20 = "
-	
+		 SELECT b.disciplina_id, b.aluno_id, count(*) AS 'VAR19'
+		 FROM mdl_message_read r
+		 INNER JOIN {".basis::table."} b ON b.aluno_id=r.useridfrom AND r.timecreated BETWEEN b.data_inicio and b.data_fim
+		 INNER JOIN {".teacher::table."} p ON p.professor_id=r.useridto AND p.disciplina_id=b.disciplina_id
+		 GROUP BY b.disciplina_id, b.aluno_id
 	";
 
 	const var21 = "
-
+		SELECT b.disciplina_id, b.aluno_id, count(*) AS 'VAR21'
+		FROM mdl_message_read r
+		INNER JOIN {".basis::table."} b ON b.aluno_id=r.useridto AND r.timecreated BETWEEN b.data_inicio and b.data_fim
+		INNER JOIN {".student::table." } a ON a.aluno_id=r.useridfrom AND a.disciplina_id=b.disciplina_id
+		GROUP BY b.disciplina_id, b.aluno_id
 	";
 
 	const var22 = "
-	
+		SELECT b.disciplina_id, b.aluno_id, count(*) AS 'VAR22'
+		FROM mdl_message_read r
+		INNER JOIN {".basis::table."} b ON b.aluno_id=r.useridfrom AND r.timecreated BETWEEN b.data_inicio and b.data_fim
+		INNER JOIN {".student::table."} a ON a.aluno_id=r.useridto AND a.disciplina_id=b.disciplina_id
+		GROUP BY b.disciplina_id, b.aluno_id
 	";
 
 	const var26 = "
