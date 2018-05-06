@@ -49,10 +49,10 @@ class local_distance_miner
 					->populate_transational_distance($id);
 			}
 			catch (dml_read_exception $e) {
-				cli_problem($e->debuginfo);
+				error_log($e->debuginfo);
 			}
 			catch (Exception $e) {
-				cli_problem($e->getMessage());
+				error_log($e->getMessage());
 			}
 		}
 
@@ -183,7 +183,7 @@ class local_distance_miner
 			$DB->insert_records($table, $buffer);
 		}
 		catch (dml_write_exception $e) {
-			cli_problem($e->debuginfo);
+			error_log($e->debuginfo);
 		}
 		finally {
 			$buffer = [];
