@@ -100,7 +100,7 @@ class transational_distance
 
 	const var19 = "
 		 SELECT b.disciplina_id, b.aluno_id, count(*) AS 'VAR19'
-		 FROM mdl_message_read r
+		 FROM {message_read} r
 		 INNER JOIN {".basis::table."} b ON b.aluno_id=r.useridfrom AND r.timecreated BETWEEN b.data_inicio and b.data_fim
 		 INNER JOIN {".teacher::table."} p ON p.professor_id=r.useridto AND p.disciplina_id=b.disciplina_id
 		 GROUP BY b.disciplina_id, b.aluno_id
@@ -108,7 +108,7 @@ class transational_distance
 
 	const var21 = "
 		SELECT b.disciplina_id, b.aluno_id, count(*) AS 'VAR21'
-		FROM mdl_message_read r
+		FROM {message_read} r
 		INNER JOIN {".basis::table."} b ON b.aluno_id=r.useridto AND r.timecreated BETWEEN b.data_inicio and b.data_fim
 		INNER JOIN {".student::table."} a ON a.aluno_id=r.useridfrom AND a.disciplina_id=b.disciplina_id
 		GROUP BY b.disciplina_id, b.aluno_id
@@ -116,7 +116,7 @@ class transational_distance
 
 	const var22 = "
 		SELECT b.disciplina_id, b.aluno_id, count(*) AS 'VAR22'
-		FROM mdl_message_read r
+		FROM {message_read} r
 		INNER JOIN {".basis::table."} b ON b.aluno_id=r.useridfrom AND r.timecreated BETWEEN b.data_inicio and b.data_fim
 		INNER JOIN {".student::table."} a ON a.aluno_id=r.useridto AND a.disciplina_id=b.disciplina_id
 		GROUP BY b.disciplina_id, b.aluno_id
