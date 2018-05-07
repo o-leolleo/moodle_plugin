@@ -24,9 +24,9 @@ class transational_distance
 		IFNULL(VAR13c.VAR13c,0) AS 'VAR13c',
 		IFNULL(VAR13d.VAR13d,0) AS 'VAR13d',
 		IFNULL(VAR18.VAR18,0) AS 'VAR18',
-		IFNULL(VAR18.VAR19,0) AS 'VAR19',
-		IFNULL(VAR18.VAR21,0) AS 'VAR21',
-		IFNULL(VAR18.VAR22,0) AS 'VAR22',
+		IFNULL(VAR19.VAR19,0) AS 'VAR19',
+		IFNULL(VAR21.VAR21,0) AS 'VAR21',
+		IFNULL(VAR22.VAR22,0) AS 'VAR22',
 		IFNULL(VAR26.VAR26,0) AS 'VAR26',
 		IFNULL(VAR27.VAR27,0) AS 'VAR27',
 		IFNULL(VAR31.VAR31,0) AS 'VAR31',
@@ -110,7 +110,7 @@ class transational_distance
 		SELECT b.disciplina_id, b.aluno_id, count(*) AS 'VAR21'
 		FROM mdl_message_read r
 		INNER JOIN {".basis::table."} b ON b.aluno_id=r.useridto AND r.timecreated BETWEEN b.data_inicio and b.data_fim
-		INNER JOIN {".student::table." } a ON a.aluno_id=r.useridfrom AND a.disciplina_id=b.disciplina_id
+		INNER JOIN {".student::table."} a ON a.aluno_id=r.useridfrom AND a.disciplina_id=b.disciplina_id
 		GROUP BY b.disciplina_id, b.aluno_id
 	";
 
