@@ -22,8 +22,11 @@ class local_distance_miner
 	public function init() {
 		global $DB;
 
-		echo 'purging data...';
+		echo 'purging data...'.PHP_EOL;
+		echo "\tpurging transational distance records...".PHP_EOL;
 		$DB->delete_records(transational_distance::table);
+
+		echo "\tpurging temporary data...".PHP_EOL;
 		$this->purge_temp_data();
 
 		return $this;
@@ -34,33 +37,38 @@ class local_distance_miner
 		$course_ids = mdl_course_categories::get_course_list();
 
 		// shared tables (should be views, but...)
-		echo "\tpopulating shared views...".PHP_EOL;
-		$this
-			->populate_students()
-			->populate_teachers()
-			->populate_posts();
+		echo "mining for shared views...".PHP_EOL;
+
+		echo "\tmining alunos views...".PHP_EOL;
+		$this->populate_students();
+
+		echo "\tmining professores views...".PHP_EOL;
+		$this->populate_teachers();
+
+		echo "\tmining posts views...".PHP_EOL;
+		$this->populate_posts();
 
 		foreach($course_ids as $id) {
-			echo "\tmining for shared views of".$id."...";
+			echo "mining for shared views of".$id."...";
 
 			try {
 				// specific tables (should be views, but...)
-				echo "\t\t mining base...".PHP_EOL;
+				echo "\t mining base...".PHP_EOL;
 				$this->populate_base($id);
 
-				echo "\t\t mining disciplinas...".PHP_EOL;
+				echo "\t mining disciplinas...".PHP_EOL;
 				$this->populate_disciplines($id);
 
-				echo "\t\t mining alunos_ids...".PHP_EOL;
+				echo "\t mining alunos_ids...".PHP_EOL;
 				$this->populate_alunos_ids($id);
 
-				echo "\t\t mining id_disciplinas...".PHP_EOL;
+				echo "\t mining id_disciplinas...".PHP_EOL;
 				$this->populate_course_ids($id);
 
-				echo "\t\t mining log_reduzido...".PHP_EOL;
+				echo "\t mining log_reduzido...".PHP_EOL;
 				$this->populate_log_reduzido($id);
 
-				echo "\t\t mining transational_distance...".PHP_EOL;
+				echo "\t mining transational_distance...".PHP_EOL;
 				$this->populate_transational_distance($id);
 			}
 			catch (dml_read_exception $e) {
@@ -73,7 +81,7 @@ class local_distance_miner
 				cli_error($e->getMessage().PHP_EOL);
 			}
 
-			echo ' DONE!'.PHP_EOL;
+			echo "\tDONE!".PHP_EOL;
 		}
 
 		$this->purge_temp_data();
