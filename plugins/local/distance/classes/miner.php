@@ -49,7 +49,7 @@ class local_distance_miner
 		$this->populate_posts();
 
 		foreach($course_ids as $id) {
-			echo "mining for shared views of".$id."...";
+			echo "mining for shared views of ".$id."...".PHP_EOL;
 
 			try {
 				// specific tables (should be views, but...)
