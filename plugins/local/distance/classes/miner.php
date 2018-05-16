@@ -22,6 +22,7 @@ class local_distance_miner
 	public function init() {
 		global $DB;
 
+		echo 'purging data...';
 		$DB->delete_records(transational_distance::table);
 		$this->purge_temp_data();
 
@@ -33,21 +34,34 @@ class local_distance_miner
 		$course_ids = mdl_course_categories::get_course_list();
 
 		// shared tables (should be views, but...)
+		echo "\tpopulating shared views...".PHP_EOL;
 		$this
 			->populate_students()
 			->populate_teachers()
 			->populate_posts();
 
 		foreach($course_ids as $id) {
+			echo "\tmining for shared views of".$id."...";
+
 			try {
 				// specific tables (should be views, but...)
-				$this
-					->populate_base($id)
-					->populate_disciplines($id)
-					->populate_alunos_ids($id)
-					->populate_course_ids($id)
-					->populate_log_reduzido($id)
-					->populate_transational_distance($id);
+				echo "\t\t mining base...".PHP_EOL;
+				$this->populate_base($id);
+
+				echo "\t\t mining disciplinas...".PHP_EOL;
+				$this->populate_disciplines($id);
+
+				echo "\t\t mining alunos_ids...".PHP_EOL;
+				$this->populate_alunos_ids($id);
+
+				echo "\t\t mining id_disciplinas...".PHP_EOL;
+				$this->populate_course_ids($id);
+
+				echo "\t\t mining log_reduzido...".PHP_EOL;
+				$this->populate_log_reduzido($id);
+
+				echo "\t\t mining transational_distance...".PHP_EOL;
+				$this->populate_transational_distance($id);
 			}
 			catch (dml_read_exception $e) {
 				$this->log_error($e->debuginfo.PHP_EOL);
@@ -55,6 +69,11 @@ class local_distance_miner
 			catch (Exception $e) {
 				$this->log_error($e->getMessage().PHP_EOL);
 			}
+			catch (Exception $e) {
+				cli_error($e->getMessage().PHP_EOL);
+			}
+
+			echo ' DONE!'.PHP_EOL;
 		}
 
 		$this->purge_temp_data();

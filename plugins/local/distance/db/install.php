@@ -8,5 +8,3 @@ function xmldb_local_distance_install()
 
 	return true;
 }
-
-xmldb_local_distance_install();
