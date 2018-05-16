@@ -14,7 +14,8 @@ use \local_distance\models\mdl_course_categories;
 
 class local_distance_miner
 {
-	private $chunk_size = 10000;
+	private $chunk_size = 1000;
+	private $buffer_clear_count = 0;
 	private $miner_log_path = '/var/tmp/moodle_plugin_transational_distance_miner.log';
 
 	public function __construct() {}
@@ -33,7 +34,8 @@ class local_distance_miner
 	}
 
 	public function mine()
-	{
+	{ 
+		$this->buffer_clear_count = 0;
 		$course_ids = mdl_course_categories::get_course_list();
 
 		// shared tables (should be views, but...)
@@ -72,13 +74,20 @@ class local_distance_miner
 				$this->populate_transational_distance($id);
 			}
 			catch (dml_read_exception $e) {
+				echo "dml_read_exception".PHP_EOL;
 				$this->log_error($e->debuginfo.PHP_EOL);
 			}
-			catch (Exception $e) {
+			catch (dml_write_exception $e) {
+				echo "dml_write_exception".PHP_EOL;
+				$this->log_error($e->debuginfo.PHP_EOL);
+			}
+			catch (dml_exception $e) {
+				echo "dml_exception".PHP_EOL;
 				$this->log_error($e->getMessage().PHP_EOL);
 			}
-			catch (Exception $e) {
-				cli_error($e->getMessage().PHP_EOL);
+			catch (moodle_exception $e) {
+				echo "moodle_exception".PHP_EOL;
+				$this->log_error($e->getMessage().PHP_EOL);
 			}
 
 			echo "\tDONE!".PHP_EOL;
@@ -172,6 +181,8 @@ class local_distance_miner
 	{
 		global $DB;
 
+		$this->buffer_clear_count = 0;
+
 		if (isset($course_id)) {
 			// TODO  the references to the same value should be
 			// replaced for something more elegant in the future
@@ -207,13 +218,18 @@ class local_distance_miner
 	{
 		global $DB;
 
+		echo "\t\tclearing buffer ".++$this->buffer_clear_count."...".PHP_EOL;
+
 		try {
 			$DB->insert_records($table, $buffer);
 		}
 		catch (dml_write_exception $e) {
 			$this->log_error($e->debuginfo);
 		}
-		catch (Exception $e) {
+		catch (dml_exception $e) {
+			$this->log_error($e->getMessage());
+		}
+		catch (moodle_exception $e) {
 			$this->log_error($e->getMessage());
 		}
 		finally {
@@ -223,6 +239,7 @@ class local_distance_miner
 
 	private function log_error($message)
 	{
+		echo $message.PHP_EOL;
 		error_log($message, 3, $this->miner_log_path);
 	}
 }
