@@ -14,7 +14,8 @@ use \local_distance\models\mdl_course_categories;
 
 class local_distance_miner
 {
-	private $chunk_size = 10000;
+	private $chunk_size = 1000;
+	private $buffer_clear_count = 0;
 	private $miner_log_path = '/var/tmp/moodle_plugin_transational_distance_miner.log';
 
 	public function __construct() {}
@@ -32,9 +33,19 @@ class local_distance_miner
 		return $this;
 	}
 
-	public function mine()
+	public function mine($ids = null)
 	{
-		$course_ids = mdl_course_categories::get_course_list();
+		if (empty($ids)) {
+			$course_ids = mdl_course_categories::get_course_list();
+		}
+		if (is_array($ids)) {
+			$course_ids = $ids;
+		}
+		else if (is_int($ids)) {
+			$course_ids = [$ids];
+		}
+
+		$this->buffer_clear_count = 0;
 
 		// shared tables (should be views, but...)
 		echo "mining for shared views...".PHP_EOL;
@@ -65,26 +76,32 @@ class local_distance_miner
 				echo "\t mining id_disciplinas...".PHP_EOL;
 				$this->populate_course_ids($id);
 
-				echo "\t mining log_reduzido...".PHP_EOL;
 				$this->populate_log_reduzido($id);
 
 				echo "\t mining transational_distance...".PHP_EOL;
 				$this->populate_transational_distance($id);
 			}
 			catch (dml_read_exception $e) {
-				$this->log_error($e->debuginfo.PHP_EOL);
+				echo "dml_read_exception".PHP_EOL;
+				$this->log_error($e->debuginfo);
 			}
-			catch (Exception $e) {
-				$this->log_error($e->getMessage().PHP_EOL);
+			catch (dml_write_exception $e) {
+				echo "dml_write_exception".PHP_EOL;
+				$this->log_error($e->debuginfo);
 			}
-			catch (Exception $e) {
-				cli_error($e->getMessage().PHP_EOL);
+			catch (dml_exception $e) {
+				echo "dml_exception".PHP_EOL;
+				$this->log_error($e->debuginfo);
+			}
+			catch (moodle_exception $e) {
+				echo "moodle_exception".PHP_EOL;
+				$this->log_error($e->debuginfo);
 			}
 
 			echo "\tDONE!".PHP_EOL;
 		}
 
-		$this->purge_temp_data();
+		// $this->purge_temp_data();
 	}
 
 	public function populate_students()
@@ -138,7 +155,10 @@ class local_distance_miner
 
 	public function populate_log_reduzido($course_id)
 	{
+		echo "\t mining log_reduzido...".PHP_EOL;
 		$this->populate(log_buffer::class, $course_id);
+
+		echo "\t mining base_log_reduzido...".PHP_EOL;
 		$this->populate(minified_log::class, $course_id);
 
 		return $this;
@@ -172,6 +192,8 @@ class local_distance_miner
 	{
 		global $DB;
 
+		$this->buffer_clear_count = 0;
+
 		if (isset($course_id)) {
 			// TODO  the references to the same value should be
 			// replaced for something more elegant in the future
@@ -180,6 +202,8 @@ class local_distance_miner
 		else {
 			$rs = $DB->get_recordset_sql($model::get);
 		}
+
+		if (!$rs->valid()) return;
 
 		// chunk size buffer
 		$buffer = [];
@@ -194,35 +218,34 @@ class local_distance_miner
 			if (count($buffer) >= $this->chunk_size) {
 				$this->store_results($model::table, $buffer);
 			}
+
 		}
 
 		if (count($buffer)) {
 			$this->store_results($model::table, $buffer);
 		}
 
+		echo "\t\tclosing rs...";
 		$rs->close();
+		echo "DONE!".PHP_EOL;
 	}
 
 	private function store_results($table, &$buffer)
 	{
 		global $DB;
 
-		try {
-			$DB->insert_records($table, $buffer);
-		}
-		catch (dml_write_exception $e) {
-			$this->log_error($e->debuginfo);
-		}
-		catch (Exception $e) {
-			$this->log_error($e->getMessage());
-		}
-		finally {
-			$buffer = [];
-		}
+		echo "\t\tinserting records...";
+		$DB->insert_records($table, $buffer);
+		echo "DONE!".PHP_EOL;
+		echo "\t\tclearing buffer ".++$this->buffer_clear_count."...";
+		$buffer = [];
+		echo 'DONE!'.PHP_EOL;
+		
 	}
 
-	private function log_error($message)
+	private function log_error($err)
 	{
-		error_log($message, 3, $this->miner_log_path);
+		echo 'ERROR -> ... logging'.PHP_EOL;
+		error_log($err, 3, $this->miner_log_path);
 	}
 }
