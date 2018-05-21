@@ -38,11 +38,14 @@ class local_distance_miner
 		if (empty($ids)) {
 			$course_ids = mdl_course_categories::get_course_list();
 		}
-		if (is_array($ids)) {
+		else if (is_array($ids)) {
 			$course_ids = $ids;
 		}
 		else if (is_int($ids)) {
 			$course_ids = [$ids];
+		}
+		else {
+			throw new Error("No allowed type of arg");
 		}
 
 		$this->buffer_clear_count = 0;

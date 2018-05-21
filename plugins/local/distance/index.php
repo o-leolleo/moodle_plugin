@@ -66,8 +66,10 @@ if(!empty($disciplina_id))
 	// var01 | var31 | var34 | var39 | var13a | var13b | var13c | var13d | var18 | var26 | var27
 	$select = 'SELECT 	ROUND(AVG(`VAR01`),2) as `var01`,
 				ROUND(AVG(`VAR31`),2) as `var31`,
-				ROUND(AVG(`VAR34`),2)  as `var34`,
 				ROUND(AVG(`VAR39`),2)  as `var39`,
+				ROUND(AVG(`VAR22`),2)  as `var22`,
+				ROUND(AVG(`VAR21`),2)  as `var21`,
+				ROUND(AVG(`VAR19`),2)  as `var19`,
 				ROUND(AVG(`VAR13a`),2) as `var13a`,
 				ROUND(AVG(`VAR13b`),2) as `var13b`,
 				ROUND(AVG(`VAR13c`),2) as `var13c`,
@@ -93,19 +95,20 @@ if(!empty($disciplina_id))
 
 	// CREATE ARRAY TO SPECIFIC GRAPH
 	$foruns_array = array(	$mean_var_object->var01,
-							$mean_var_object->var31,
-							$mean_var_object->var34,
-							$mean_var_object->var39
+				$mean_var_object->var31,
+				$mean_var_object->var39,
+				$mean_var_object->var22,
+				$mean_var_object->var21,
+				$mean_var_object->var19
 						);
 
 	$ambiente_array = array(	$mean_var_object->var13a,
-								$mean_var_object->var13b,
-								$mean_var_object->var13c,
-								$mean_var_object->var13d,
-								$mean_var_object->var18,
-								$mean_var_object->var26,
-								$mean_var_object->var27
-
+					$mean_var_object->var13b,
+					$mean_var_object->var13c,
+					$mean_var_object->var13d,
+					$mean_var_object->var18,
+					$mean_var_object->var26,
+					$mean_var_object->var27
 							);
 	// CREATE CHART SERIES
 	$foruns_serie   = new core\chart_series('Média da turma', $foruns_array);
@@ -251,8 +254,10 @@ if(!empty($aluno_id) && !empty($disciplina_id))
 		// GRAPH: RELACIONADAS AOS FORUNS
 		$graph01_select = 'SELECT	`VAR01` as `0`,
 						`VAR31` as `1`,
-						`VAR34` as `2`,
-						`VAR39` as `3`';
+						`VAR39` as `2`,
+						`VAR22` as `3`,
+						`VAR21` as `4`,
+						`VAR19` as `5`';
 
 		// GRAPH: RELACIONADAS AOS ACESSOS
 		$graph02_select = 'SELECT	`VAR13a` as `0`,
