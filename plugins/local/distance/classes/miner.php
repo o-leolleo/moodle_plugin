@@ -20,13 +20,8 @@ class local_distance_miner
 
 	public function __construct() {}
 
-	public function init() {
-		global $DB;
-
-		echo 'purging data...'.PHP_EOL;
-		echo "\tpurging transational distance records...".PHP_EOL;
-		$DB->delete_records(transational_distance::table);
-
+	public function init() 
+	{
 		echo "\tpurging temporary data...".PHP_EOL;
 		$this->purge_temp_data();
 
@@ -85,19 +80,11 @@ class local_distance_miner
 				$this->populate_transational_distance($id);
 			}
 			catch (dml_read_exception $e) {
-				echo "dml_read_exception".PHP_EOL;
+				var_dump($e->debuginfo);
 				$this->log_error($e->debuginfo);
 			}
 			catch (dml_write_exception $e) {
-				echo "dml_write_exception".PHP_EOL;
-				$this->log_error($e->debuginfo);
-			}
-			catch (dml_exception $e) {
-				echo "dml_exception".PHP_EOL;
-				$this->log_error($e->debuginfo);
-			}
-			catch (moodle_exception $e) {
-				echo "moodle_exception".PHP_EOL;
+				var_dump($e->debuginfo);
 				$this->log_error($e->debuginfo);
 			}
 
@@ -195,6 +182,13 @@ class local_distance_miner
 	{
 		global $DB;
 
+		if (defined($model.'::update')) {
+			// Update operations (in this case replace operations)
+			// take a higher prority over get operations
+			$DB->execute($model::update, [$course_id, $course_id, $course_id]);
+			return;
+		}
+
 		$this->buffer_clear_count = 0;
 
 		if (isset($course_id)) {
@@ -211,26 +205,33 @@ class local_distance_miner
 		// chunk size buffer
 		$buffer = [];
 
-		foreach ($rs as $record) {
-			if (isset($handler)) {
-				$record = $handler($record);
+		try {
+			foreach ($rs as $record) {		
+				if (isset($handler)) {
+					$record = $handler($record);
+				}
+				
+				$buffer[] = $record;
+				
+				if (count($buffer) >= $this->chunk_size) {
+					// echo memory_get_peak_usage().PHP_EOL;
+					$this->store_results($model::table, $buffer);
+				}
 			}
-
-			$buffer[] = $record;
-
-			if (count($buffer) >= $this->chunk_size) {
+		
+			if (count($buffer)) {
 				$this->store_results($model::table, $buffer);
 			}
+		} 
+		catch(dml_write_exception $e) {
+		} 
+		finally {
+			echo "\n\t\tclosing rs...";
 
+			$rs->close();
+			
+			echo "DONE!".PHP_EOL;
 		}
-
-		if (count($buffer)) {
-			$this->store_results($model::table, $buffer);
-		}
-
-		echo "\t\tclosing rs...";
-		$rs->close();
-		echo "DONE!".PHP_EOL;
 	}
 
 	private function store_results($table, &$buffer)
@@ -238,17 +239,26 @@ class local_distance_miner
 		global $DB;
 
 		echo "\t\tinserting records...";
+
 		$DB->insert_records($table, $buffer);
+
 		echo "DONE!".PHP_EOL;
+
 		echo "\t\tclearing buffer ".++$this->buffer_clear_count."...";
+
+		$length = count($buffer);
+
+		for ($k = 0; $k < $length; ++$k) {
+			unset($buffer[$k]);
+		}
+
 		$buffer = [];
-		echo 'DONE!'.PHP_EOL;
-		
+
+		echo "DONE!".PHP_EOL;
 	}
 
 	private function log_error($err)
 	{
-		echo 'ERROR -> ... logging'.PHP_EOL;
 		error_log($err, 3, $this->miner_log_path);
 	}
 }

@@ -8,7 +8,18 @@ class log_buffer
 	// TODO verificar se estes últimos
 	// campos estão repetidos
 	// TODO retirar a utilização de TRIM
-	const get = "
+	const update = "
+		INSERT INTO {".self::table."} (
+			id,
+			time,
+			userid,
+			course,
+			course_id,
+			module,
+			action,
+			ip,
+			cmid
+		)
 		SELECT
 			id,
 			timecreated `time`,

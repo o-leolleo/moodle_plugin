@@ -5,7 +5,16 @@ class post
 {
 	const table = "posts";
 
-	const get = " 
+	const update = "
+		INSERT INTO {".self::table."} (
+			disciplina_id, 
+			data, 
+			nome_forum, 
+			post, 
+			parent,
+			emissor,
+			receptor
+		) 
 		SELECT
 			fd.course AS 'disciplina_id',
 			p2.created AS 'data',
@@ -17,5 +26,6 @@ class post
 		FROM mdl_forum_posts p1
 		INNER JOIN mdl_forum_posts p2 ON  p1.id=p2.parent
 		INNER JOIN mdl_forum_discussions fd ON p1.discussion=fd.id
-		INNER JOIN mdl_forum f ON fd.forum=f.id";
+		INNER JOIN mdl_forum f ON fd.forum=f.id
+	";
 }

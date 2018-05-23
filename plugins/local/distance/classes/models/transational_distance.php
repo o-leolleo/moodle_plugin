@@ -5,9 +5,34 @@ class transational_distance
 {
 	const table = "transational_distance";
 
-		//basis.semestre AS 'semestre',
-	const get =
+	//basis.semestre AS 'semestre',
+	const update =
 	"
+		INSERT INTO {".self::table."} (
+			course_id,
+			curso,
+			periodo,
+			disciplina_nome,
+			disciplina_id,
+			data_inicio,
+			data_fim,
+			aluno_nome,
+			aluno_id,
+			VAR01,
+			VAR13a,
+			VAR13b,
+			VAR13c,
+			VAR13d,
+			VAR18,
+			VAR19,
+			VAR21,
+			VAR22,
+			VAR26,
+			VAR27,
+			VAR31,
+			VAR34,
+			VAR39
+		)
 		SELECT
 		basis.course_id,
 		basis.curso AS 'curso',
