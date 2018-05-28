@@ -49,7 +49,7 @@ class basis
 		$first_period = (int) substr($first_semester, -1);
 		$curr_year    = (int) substr($curr_semester, 4);
 		$curr_period  = (int) substr($curr_semester, -1);
-
+		
 		return ($curr_year - $first_year) * 2 + $curr_period - $first_period + 1;
 	}
 
