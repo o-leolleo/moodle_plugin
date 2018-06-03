@@ -91,7 +91,7 @@ class local_distance_miner
 			echo "\tDONE!".PHP_EOL;
 		}
 
-		// $this->purge_temp_data();
+		$this->purge_temp_data();
 	}
 
 	public function populate_students()
