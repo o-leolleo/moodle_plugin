@@ -41,5 +41,14 @@ class log_buffer
 		AND userid IN (
 			SELECT aluno_id FROM {".aluno_ids::table."} WHERE course_id = ?
 		)
+		ON DUPLICATE KEYS UPDATE
+			time      = VALUES(time),
+			userid    = VALUES(userid),
+			course    = VALUES(course),
+			course_id = VALUES(course_id),
+			module    = VALUES(module),
+			action    = VALUES(action),
+			ip        = VALUES(ip),
+			cmid      = VALUES(cmid)
 	";
 }
