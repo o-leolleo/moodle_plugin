@@ -41,7 +41,7 @@ class log_buffer
 		AND userid IN (
 			SELECT aluno_id FROM {".aluno_ids::table."} WHERE course_id = ?
 		)
-		ON DUPLICATE KEYS UPDATE
+		ON DUPLICATE KEY UPDATE
 			time      = VALUES(time),
 			userid    = VALUES(userid),
 			course    = VALUES(course),
