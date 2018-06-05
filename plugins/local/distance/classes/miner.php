@@ -16,11 +16,10 @@ class local_distance_miner
 {
 	private $chunk_size = 1000;
 	private $buffer_clear_count = 0;
-	private $miner_log_path = '/var/tmp/moodle_plugin_transational_distance_miner.log';
 
 	public function __construct() {}
 
-	public function init() 
+	public function init()
 	{
 		echo "\tpurging temporary data...".PHP_EOL;
 		$this->purge_temp_data();
@@ -78,20 +77,19 @@ class local_distance_miner
 
 				echo "\t mining transational_distance...".PHP_EOL;
 				$this->populate_transational_distance($id);
+
+				echo "\t deleting temporary data of ".$id.PHP_EOL;
+				$this->purge_temp_data($id);
 			}
 			catch (dml_read_exception $e) {
 				var_dump($e->debuginfo);
-				$this->log_error($e->debuginfo);
 			}
 			catch (dml_write_exception $e) {
 				var_dump($e->debuginfo);
-				$this->log_error($e->debuginfo);
 			}
 
 			echo "\tDONE!".PHP_EOL;
 		}
-
-		$this->purge_temp_data();
 	}
 
 	public function populate_students()
@@ -161,19 +159,25 @@ class local_distance_miner
 		return $this;
 	}
 
-	public function purge_temp_data()
+	public function purge_temp_data($course_id = null)
 	{
 		global $DB;
 
-		$DB->delete_records(basis::table);
-		$DB->delete_records(discipline::table);
-		$DB->delete_records(student::table);
-		$DB->delete_records(post::table);
-		$DB->delete_records(teacher::table);
-		$DB->delete_records(aluno_ids::table);
-		$DB->delete_records(course_id::table);
-		$DB->delete_records(log_buffer::table);
-		$DB->delete_records(minified_log::table);
+		$condition = null;
+
+		if (!empty($course_id)) {
+			$condition = [ 'course_id' => $course_id ];
+		}
+
+		$DB->delete_records(basis::table, $condition);
+		$DB->delete_records(discipline::table, $condition);
+		$DB->delete_records(student::table, $condition);
+		$DB->delete_records(post::table, $condition);
+		$DB->delete_records(teacher::table, $condition);
+		$DB->delete_records(aluno_ids::table, $condition);
+		$DB->delete_records(course_id::table, $condition);
+		$DB->delete_records(log_buffer::table, $condition);
+		$DB->delete_records(minified_log::table, $condition);
 
 		return $this;
 	}
@@ -206,30 +210,30 @@ class local_distance_miner
 		$buffer = [];
 
 		try {
-			foreach ($rs as $record) {		
+			foreach ($rs as $record) {
 				if (isset($handler)) {
 					$record = $handler($record);
 				}
-				
+
 				$buffer[] = $record;
-				
+
 				if (count($buffer) >= $this->chunk_size) {
 					// echo memory_get_peak_usage().PHP_EOL;
 					$this->store_results($model::table, $buffer);
 				}
 			}
-		
+
 			if (count($buffer)) {
 				$this->store_results($model::table, $buffer);
 			}
-		} 
+		}
 		catch(dml_write_exception $e) {
-		} 
+		}
 		finally {
 			echo "\n\t\tclosing rs...";
 
 			$rs->close();
-			
+
 			echo "DONE!".PHP_EOL;
 		}
 	}
@@ -255,10 +259,5 @@ class local_distance_miner
 		$buffer = [];
 
 		echo "DONE!".PHP_EOL;
-	}
-
-	private function log_error($err)
-	{
-		error_log($err, 3, $this->miner_log_path);
 	}
 }
