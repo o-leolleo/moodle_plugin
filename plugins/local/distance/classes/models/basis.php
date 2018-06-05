@@ -15,6 +15,7 @@ class basis
 			discipline.fullname AS 'disciplina_nome',
 			discipline.id  AS 'disciplina_id',
 			discipline.startdate AS 'data_inicio',
+			discipline.enddate AS 'data_fim',
 			participant.id AS 'aluno_id',
 			CONCAT(participant.firstname, ' ',participant.lastname) AS 'aluno_nome'
 		FROM {course} discipline
@@ -49,18 +50,8 @@ class basis
 		$first_period = (int) substr($first_semester, -1);
 		$curr_year    = (int) substr($curr_semester, 4);
 		$curr_period  = (int) substr($curr_semester, -1);
-		
+
 		return ($curr_year - $first_year) * 2 + $curr_period - $first_period + 1;
-	}
-
-	public static function calculate_end_date($semester)
-	{
-		$year = substr($semester, 0, 4);
-		$period = substr($semester, -1);
-
-		$dateString = $period == 1 ? $year."-06-30" : $year."-12-31"; 
-
-		return (string)(new Datetime($dateString))->getTimestamp();
 	}
 
 	public static function handle_semester($semester)
@@ -76,7 +67,6 @@ class basis
 		return function($record) use ($first_semester) {
 			$record->semestre = self::handle_semester($record->semestre);
 			$record->periodo  = self::calculate_period($record->semestre, $first_semester->name);
-			$record->data_fim = self::calculate_end_date($record->semestre);
 
 			return $record;
 		};
