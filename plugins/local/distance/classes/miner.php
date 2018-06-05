@@ -16,11 +16,10 @@ class local_distance_miner
 {
 	private $chunk_size = 1000;
 	private $buffer_clear_count = 0;
-	private $miner_log_path = '/var/tmp/moodle_plugin_transational_distance_miner.log';
 
 	public function __construct() {}
 
-	public function init() 
+	public function init()
 	{
 		echo "\tpurging temporary data...".PHP_EOL;
 		$this->purge_temp_data();
@@ -81,11 +80,9 @@ class local_distance_miner
 			}
 			catch (dml_read_exception $e) {
 				var_dump($e->debuginfo);
-				$this->log_error($e->debuginfo);
 			}
 			catch (dml_write_exception $e) {
 				var_dump($e->debuginfo);
-				$this->log_error($e->debuginfo);
 			}
 
 			echo "\tDONE!".PHP_EOL;
@@ -206,30 +203,30 @@ class local_distance_miner
 		$buffer = [];
 
 		try {
-			foreach ($rs as $record) {		
+			foreach ($rs as $record) {
 				if (isset($handler)) {
 					$record = $handler($record);
 				}
-				
+
 				$buffer[] = $record;
-				
+
 				if (count($buffer) >= $this->chunk_size) {
 					// echo memory_get_peak_usage().PHP_EOL;
 					$this->store_results($model::table, $buffer);
 				}
 			}
-		
+
 			if (count($buffer)) {
 				$this->store_results($model::table, $buffer);
 			}
-		} 
+		}
 		catch(dml_write_exception $e) {
-		} 
+		}
 		finally {
 			echo "\n\t\tclosing rs...";
 
 			$rs->close();
-			
+
 			echo "DONE!".PHP_EOL;
 		}
 	}
@@ -255,10 +252,5 @@ class local_distance_miner
 		$buffer = [];
 
 		echo "DONE!".PHP_EOL;
-	}
-
-	private function log_error($err)
-	{
-		error_log($err, 3, $this->miner_log_path);
 	}
 }
