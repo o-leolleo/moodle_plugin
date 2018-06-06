@@ -77,6 +77,9 @@ class local_distance_miner
 
 				echo "\t mining transational_distance...".PHP_EOL;
 				$this->populate_transational_distance($id);
+
+				echo "\t deleting temporary data of ".$id.PHP_EOL;
+				$this->purge_specific_data();
 			}
 			catch (dml_read_exception $e) {
 				var_dump($e->debuginfo);
@@ -87,8 +90,6 @@ class local_distance_miner
 
 			echo "\tDONE!".PHP_EOL;
 		}
-
-		$this->purge_temp_data();
 	}
 
 	public function populate_students()
@@ -160,19 +161,35 @@ class local_distance_miner
 
 	public function purge_temp_data()
 	{
+		$this->purge_shared_data();
+		$this->purge_specific_data();
+		
+		return $this;
+	}
+
+	public function purge_shared_data()
+	{
+		global $DB;
+
+		$DB->delete_records(student::table);
+		$DB->delete_records(teacher::table);
+		$DB->delete_records(post::table);
+
+		return $this;
+	}
+
+	public function purge_specific_data()
+	{
 		global $DB;
 
 		$DB->delete_records(basis::table);
 		$DB->delete_records(discipline::table);
-		$DB->delete_records(student::table);
-		$DB->delete_records(post::table);
-		$DB->delete_records(teacher::table);
 		$DB->delete_records(aluno_ids::table);
 		$DB->delete_records(course_id::table);
 		$DB->delete_records(log_buffer::table);
 		$DB->delete_records(minified_log::table);
 
-		return $this;
+		return $this; 
 	}
 
 	private function populate($model, $course_id = null, $handler = null)
