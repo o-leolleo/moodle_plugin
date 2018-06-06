@@ -10,7 +10,7 @@ class mine_ead_moodle_data extends \core\task\scheduled_task
 	}
 
 	public function execute() {
-		$miner = new \local_distance_miner;
-		$miner->init()->mine();
+		$miner_job = new miner();
+		\core\task\manager::queue_adhoc_task($miner_job);
 	}
 }
