@@ -79,7 +79,7 @@ class local_distance_miner
 				$this->populate_transational_distance($id);
 
 				echo "\t deleting temporary data of ".$id.PHP_EOL;
-				$this->purge_temp_data($id);
+				$this->purge_specific_data();
 			}
 			catch (dml_read_exception $e) {
 				var_dump($e->debuginfo);
@@ -159,27 +159,37 @@ class local_distance_miner
 		return $this;
 	}
 
-	public function purge_temp_data($course_id = null)
+	public function purge_temp_data()
+	{
+		$this->purge_shared_data();
+		$this->purge_specific_data();
+		
+		return $this;
+	}
+
+	public function purge_shared_data()
 	{
 		global $DB;
 
-		$condition = null;
-
-		if (!empty($course_id)) {
-			$condition = [ 'course_id' => $course_id ];
-		}
-
-		$DB->delete_records(basis::table, $condition);
-		$DB->delete_records(discipline::table, $condition);
-		$DB->delete_records(student::table, $condition);
-		$DB->delete_records(post::table, $condition);
-		$DB->delete_records(teacher::table, $condition);
-		$DB->delete_records(aluno_ids::table, $condition);
-		$DB->delete_records(course_id::table, $condition);
-		$DB->delete_records(log_buffer::table, $condition);
-		$DB->delete_records(minified_log::table, $condition);
+		$DB->delete_records(student::table);
+		$DB->delete_records(teacher::table);
+		$DB->delete_records(post::table);
 
 		return $this;
+	}
+
+	public function purge_specific_data()
+	{
+		global $DB;
+
+		$DB->delete_records(basis::table);
+		$DB->delete_records(discipline::table);
+		$DB->delete_records(aluno_ids::table);
+		$DB->delete_records(course_id::table);
+		$DB->delete_records(log_buffer::table);
+		$DB->delete_records(minified_log::table);
+
+		return $this; 
 	}
 
 	private function populate($model, $course_id = null, $handler = null)
