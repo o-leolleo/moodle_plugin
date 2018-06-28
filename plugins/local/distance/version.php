@@ -2,6 +2,7 @@
 /**
  * @package 	report_distance
  * @author 		leolleocomp, <leolleo.comp@gmail.com>
+ * @author 		gutodisse1,  <gutodisse@gmail.com>
  */
 defined('MOODLE_INTERNAL') || die();
 
