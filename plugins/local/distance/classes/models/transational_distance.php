@@ -210,7 +210,7 @@ class transational_distance
 	";
 
 	const var39 = "
-		SELECT p1.disciplina_id,p1.data,post,parent, emissor, receptor, count(*) AS 'VAR39'
+		SELECT p1.disciplina_id, emissor, count(*) AS 'VAR39'
 		FROM {posts} p1
 		INNER JOIN {".basis::table."} b ON b.disciplina_id=p1.disciplina_id AND b.aluno_id=p1.emissor AND p1.data BETWEEN b.data_inicio and b.data_fim
 		INNER JOIN {".student::table."} p2 ON p2.disciplina_id=p1.disciplina_id  AND p2.aluno_id=p1.receptor
