@@ -1,4 +1,6 @@
 <?php
+ini_set('max_exection_time', 6000);
+ini_set('memory_limit', '512M');
 
 use \local_distance\models\basis;
 use \local_distance\models\discipline;
@@ -163,7 +165,7 @@ class local_distance_miner
 	{
 		$this->purge_shared_data();
 		$this->purge_specific_data();
-		
+
 		return $this;
 	}
 
@@ -189,7 +191,7 @@ class local_distance_miner
 		$DB->delete_records(log_buffer::table);
 		$DB->delete_records(minified_log::table);
 
-		return $this; 
+		return $this;
 	}
 
 	private function populate($model, $course_id = null, $handler = null)

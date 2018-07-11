@@ -1,5 +1,8 @@
-<?php
+<?php 
 namespace local_distance\task;
+
+ini_set('max_exection_time', 6000);
+ini_set('memory_limit', '512M');
 
 use local_distance\job\miner;
 
