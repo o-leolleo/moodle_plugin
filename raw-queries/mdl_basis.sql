@@ -24,4 +24,4 @@ ORDER BY
 	curso,
 	semestre,
 	disciplina_id,
-	aluno_nome";
+	aluno_nome;
