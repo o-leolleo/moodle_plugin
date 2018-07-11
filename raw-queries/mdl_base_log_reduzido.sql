@@ -18,4 +18,4 @@ SELECT
 	ip,
 	cmid
 FROM mdl_log_reduzido
-WHERE course_id = ?
+WHERE course_id = 13
