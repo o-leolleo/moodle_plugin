@@ -14,7 +14,7 @@ SELECT
 	timecreated `time`,
 	userid,
 	courseid `course`,
-	? `course_id`,
+	13 `course_id`,
 	TRIM(LEADING 'mod_' FROM component) `module`,
 	action,
 	ip,
@@ -24,11 +24,11 @@ WHERE (
 	action='loggedout' OR
 	action='loggedin' OR
 	courseid IN (
-		SELECT disciplina_id FROM mdl_id_disciplinas WHERE course_id = ?
+		SELECT disciplina_id FROM mdl_id_disciplinas WHERE course_id = 13
 	)
 )
 AND userid IN (
-	SELECT aluno_id FROM mdl_id_alunos WHERE course_id = ?
+	SELECT aluno_id FROM mdl_id_alunos WHERE course_id = 13
 )
 ON DUPLICATE KEY UPDATE
 	time      = VALUES(time),
