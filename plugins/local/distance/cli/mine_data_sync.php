@@ -11,6 +11,13 @@ require_once($CFG->libdir.'/clilib.php');
 // extra safety
 \core\session\manager::write_close();
 
+// check if execution allowed
+if (!empty($CFG->cronclionly)) {
+    // This script can only be run via the cli.
+    print_error('cronerrorclionly', 'admin');
+    exit;
+}
+
 // This script is being called via the web, so check the password if there is one.
 if (!empty($CFG->cronremotepassword)) {
     $pass = optional_param('password', '', PARAM_RAW);
