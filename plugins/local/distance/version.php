@@ -7,7 +7,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'local_distance';
-$plugin->version = 2018021677;
+$plugin->version = 2018021680;
 $plugin->require = 2016120500;
 $plugin->maturity = MATURITY_ALPHA;
 $plugin->name = '0.0.1';
