@@ -5,6 +5,10 @@ class transational_distance
 {
 	const table = "transational_distance";
 
+	const select_by_discipline = "
+		SELECT * FROM {".self::table."} WHERE disciplina_id = ?
+	";
+
 	const update =
 	"
 		INSERT INTO {".self::table."} (

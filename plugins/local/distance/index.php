@@ -312,6 +312,9 @@ if(!empty($disciplinas[$disciplina_id]))
 	// DISPLAY THE NAME OF 'DISCIPLINA'
 	echo $OUTPUT->heading($disciplinas[$disciplina_id]);
 
+	// DISPLAY BUTTON FOR REPORT DOWNLOAD
+	echo $OUTPUT->single_button(new moodle_url('export_data.php', ['disciplina_id' => $disciplina_id]), "Download");
+
 	// GET CONTEXT 
 	$course_context = context_course::instance($disciplina_id);
 	

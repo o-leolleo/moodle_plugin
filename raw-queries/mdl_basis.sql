@@ -17,7 +17,8 @@ FROM mdl_course discipline
 	INNER JOIN  mdl_role_assignments rs  ON  (rs.userid = participant.id)
 	INNER JOIN  mdl_context e  ON  (e.id = rs.contextid AND discipline.id = e.instanceid)
 WHERE
-	course.id = 13 AND
+	discipline.id = 319 AND
+	course.id = 16 AND
 	e.contextlevel = 50 AND
 	rs.roleid = 5
 ORDER BY
